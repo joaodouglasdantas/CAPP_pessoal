@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Capp</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  </head>
+  <body>
+    <nav>
+      <% if user_signed_in? %>
+        <span>Olá, <%= current_user.nome %></span>
+        <% if current_user.administrador? %>
+          <%= link_to "Blocos", blocos_path %> |
+          <%= link_to "Usuários", usuarios_path %> |
+          <%= link_to "Chamados", chamados_path %> |
+          <%= link_to "Tipos de Chamado", tipos_chamado_index_path %> |
+          <%= link_to "Status", status_chamados_path %>
+        <% elsif current_user.colaborador? %>
+          <%= link_to "Chamados", chamados_path %>
+        <% elsif current_user.morador? %>
+          <%= link_to "Meus Chamados", chamados_path %> |
+          <%= link_to "Abrir Chamado", new_chamado_path %>
+        <% end %>
+        <%= link_to "Sair", destroy_user_session_path, method: :get %>
+      <% end %>
+    </nav>
+
+    <% if notice %>
+      <p style="color: green"><%= notice %></p>
+    <% end %>
+    <% if alert %>
+      <p style="color: red"><%= alert %></p>
+    <% end %>
+
+    <%= yield %>
+  </body>
+</html>

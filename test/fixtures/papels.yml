@@ -1,0 +1,11 @@
+administrador:
+  nome: administrador
+  descricao: Acesso total ao sistema
+
+colaborador:
+  nome: colaborador
+  descricao: Acesso à gestão de chamados
+
+morador:
+  nome: morador
+  descricao: Acesso aos próprios chamados

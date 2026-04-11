@@ -1,0 +1,28 @@
+<h1>Blocos</h1>
+<%= link_to "Novo Bloco", new_bloco_path %>
+<table>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Andares</th>
+      <th>Unidades por andar</th>
+      <th>Total de unidades</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @blocos.each do |bloco| %>
+      <tr>
+        <td><%= bloco.nome %></td>
+        <td><%= bloco.quantidade_andares %></td>
+        <td><%= bloco.unidades_por_andar %></td>
+        <td><%= bloco.unidades.count %></td>
+        <td>
+          <%= link_to "Ver", bloco %>
+          <%= link_to "Editar", edit_bloco_path(bloco) %>
+          <%= link_to "Remover", bloco, data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

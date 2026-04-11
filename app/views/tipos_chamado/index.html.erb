@@ -1,0 +1,24 @@
+<h1>Tipos de Chamado</h1>
+<%= link_to "Novo Tipo", new_tipos_chamado_path %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Título</th>
+      <th>SLA (horas)</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tipos_chamado.each do |tipo| %>
+      <tr>
+        <td><%= tipo.titulo %></td>
+        <td><%= tipo.sla_horas %></td>
+        <td>
+          <%= link_to "Editar", edit_tipos_chamado_path(tipo) %>
+          <%= link_to "Remover", tipos_chamado_path(tipo), data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

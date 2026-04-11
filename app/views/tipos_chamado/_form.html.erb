@@ -1,0 +1,20 @@
+<%= form_with model: tipo_chamado, url: tipo_chamado.new_record? ? tipos_chamado_index_path : tipos_chamado_path(tipo_chamado) do |f| %>
+  <% if tipo_chamado.errors.any? %>
+    <ul>
+      <% tipo_chamado.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= f.label :titulo, "Título" %>
+    <%= f.text_field :titulo %>
+  </div>
+  <div>
+    <%= f.label :sla_horas, "SLA (horas)" %>
+    <%= f.number_field :sla_horas, min: 1 %>
+  </div>
+
+  <%= f.submit %>
+<% end %>

@@ -1,0 +1,35 @@
+<h1>Chamado #<%= @chamado.id %></h1>
+
+<p><strong>Unidade:</strong> <%= @chamado.unidade.identificacao %></p>
+<p><strong>Tipo:</strong> <%= @chamado.tipo_chamado.titulo %></p>
+<p><strong>Status:</strong> <%= @chamado.status_chamado.nome %></p>
+<p><strong>Descrição:</strong> <%= @chamado.descricao %></p>
+<p><strong>Aberto por:</strong> <%= @chamado.usuario.nome %></p>
+<p><strong>Aberto em:</strong> <%= @chamado.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+<% if @chamado.finalizado_em %>
+  <p><strong>Finalizado em:</strong> <%= @chamado.finalizado_em.strftime("%d/%m/%Y %H:%M") %></p>
+<% end %>
+
+<% if current_user.administrador? || current_user.colaborador? %>
+  <%= link_to "Atualizar Status", edit_chamado_path(@chamado) %>
+<% end %>
+
+<h2>Comentários</h2>
+<% @comentarios.each do |comentario| %>
+  <div>
+    <strong><%= comentario.usuario.nome %></strong>
+    <span><%= comentario.created_at.strftime("%d/%m/%Y %H:%M") %></span>
+    <p><%= comentario.mensagem %></p>
+  </div>
+<% end %>
+
+<h3>Adicionar Comentário</h3>
+<%= form_with model: [@chamado, @comentario] do |f| %>
+  <div>
+    <%= f.label :mensagem %>
+    <%= f.text_area :mensagem, rows: 3 %>
+  </div>
+  <%= f.submit "Comentar" %>
+<% end %>
+
+<%= link_to "Voltar", chamados_path %>

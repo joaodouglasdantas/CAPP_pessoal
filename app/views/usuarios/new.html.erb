@@ -1,0 +1,34 @@
+<h1>Novo Usuário</h1>
+<%= form_with model: @usuario, url: usuarios_path do |f| %>
+  <% if @usuario.errors.any? %>
+    <ul>
+      <% @usuario.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= f.label :nome %>
+    <%= f.text_field :nome %>
+  </div>
+  <div>
+    <%= f.label :email %>
+    <%= f.email_field :email %>
+  </div>
+  <div>
+    <%= f.label :password, "Senha" %>
+    <%= f.password_field :password %>
+  </div>
+  <div>
+    <%= f.label :password_confirmation, "Confirmar senha" %>
+    <%= f.password_field :password_confirmation %>
+  </div>
+  <div>
+    <label>Papel</label>
+    <%= select_tag :papel_id, options_from_collection_for_select(@papeis, :id, :nome) %>
+  </div>
+
+  <%= f.submit "Criar Usuário" %>
+<% end %>
+<%= link_to "Voltar", usuarios_path %>

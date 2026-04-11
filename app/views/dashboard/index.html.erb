@@ -1,0 +1,20 @@
+<h1>Dashboard</h1>
+
+<% if current_user.administrador? %>
+  <h2>Resumo</h2>
+  <p>Total de blocos: <%= @blocos.count %></p>
+  <p>Total de chamados: <%= @chamados.count %></p>
+  <p>Total de usuários: <%= @usuarios.count %></p>
+  <%= link_to "Gerenciar Blocos", blocos_path %>
+
+<% elsif current_user.colaborador? %>
+  <h2>Chamados Pendentes</h2>
+  <p>Total de chamados: <%= @chamados.count %></p>
+  <%= link_to "Ver Chamados", chamados_path %>
+
+<% elsif current_user.morador? %>
+  <h2>Meus Chamados</h2>
+  <p>Total de chamados: <%= @chamados.count %></p>
+  <%= link_to "Ver Meus Chamados", chamados_path %> |
+  <%= link_to "Abrir Novo Chamado", new_chamado_path %>
+<% end %>

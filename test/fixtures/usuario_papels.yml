@@ -1,0 +1,15 @@
+admin_papel:
+  usuario: administrador
+  papel: administrador
+
+colaborador_papel:
+  usuario: colaborador
+  papel: colaborador
+
+morador_papel:
+  usuario: morador
+  papel: morador
+
+morador_dois_papel:
+  usuario: morador_dois
+  papel: morador

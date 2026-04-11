@@ -1,0 +1,9 @@
+<h1>Atualizar Status do Chamado #<%= @chamado.id %></h1>
+<%= form_with model: @chamado do |f| %>
+  <div>
+    <%= f.label :status_chamado_id, "Status" %>
+    <%= f.select :status_chamado_id, @status_list.map { |s| [s.nome, s.id] } %>
+  </div>
+  <%= f.submit "Atualizar" %>
+<% end %>
+<%= link_to "Voltar", chamado_path(@chamado) %>

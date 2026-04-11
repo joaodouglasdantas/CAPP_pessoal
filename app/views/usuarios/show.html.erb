@@ -1,0 +1,45 @@
+<h1><%= @usuario.nome %></h1>
+<p><strong>Email:</strong> <%= @usuario.email %></p>
+<p><strong>Papel:</strong> <%= @usuario.papeis.map(&:nome).join(", ") %></p>
+
+<h2>Unidades Vinculadas</h2>
+<% if @unidades_vinculadas.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>Bloco</th>
+        <th>Identificação</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @unidades_vinculadas.each do |unidade| %>
+        <tr>
+          <td><%= unidade.bloco.nome %></td>
+          <td><%= unidade.identificacao %></td>
+          <td>
+            <%= button_to "Desvincular", desvincular_unidade_usuario_path(@usuario, unidade_id: unidade.id), method: :delete, data: { turbo_confirm: "Tem certeza?" } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>Nenhuma unidade vinculada.</p>
+<% end %>
+
+<h2>Vincular Nova Unidade</h2>
+<%= form_with url: vincular_unidade_usuario_path(@usuario), method: :post do |f| %>
+  <div>
+    <%= select_tag :unidade_id,
+        grouped_options_for_select(
+          @todas_unidades.group_by { |u| u.bloco.nome }
+                         .transform_values { |unidades| unidades.map { |u| [u.identificacao, u.id] } }
+        ),
+        prompt: "Selecione uma unidade" %>
+  </div>
+  <%= f.submit "Vincular" %>
+<% end %>
+
+<%= link_to "Editar", edit_usuario_path(@usuario) %> |
+<%= link_to "Voltar", usuarios_path %>

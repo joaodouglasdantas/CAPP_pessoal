@@ -1,0 +1,22 @@
+<h1>Editar Usuário</h1>
+<%= form_with model: @usuario, url: usuario_path(@usuario), method: :patch do |f| %>
+  <% if @usuario.errors.any? %>
+    <ul>
+      <% @usuario.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= f.label :nome %>
+    <%= f.text_field :nome %>
+  </div>
+  <div>
+    <%= f.label :email %>
+    <%= f.email_field :email %>
+  </div>
+
+  <%= f.submit "Atualizar" %>
+<% end %>
+<%= link_to "Voltar", usuario_path(@usuario) %>

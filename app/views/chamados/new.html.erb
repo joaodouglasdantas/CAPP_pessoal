@@ -1,0 +1,26 @@
+<h1>Abrir Chamado</h1>
+<%= form_with model: @chamado do |f| %>
+  <% if @chamado.errors.any? %>
+    <ul>
+      <% @chamado.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= f.label :unidade_id, "Unidade" %>
+    <%= f.select :unidade_id, @unidades.map { |u| [u.identificacao, u.id] } %>
+  </div>
+  <div>
+    <%= f.label :tipo_chamado_id, "Tipo de Chamado" %>
+    <%= f.select :tipo_chamado_id, @tipos.map { |t| [t.titulo, t.id] } %>
+  </div>
+  <div>
+    <%= f.label :descricao, "Descrição" %>
+    <%= f.text_area :descricao, rows: 4 %>
+  </div>
+
+  <%= f.submit "Abrir Chamado" %>
+<% end %>
+<%= link_to "Voltar", chamados_path %>

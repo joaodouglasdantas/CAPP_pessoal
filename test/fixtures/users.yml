@@ -1,0 +1,21 @@
+<% require 'bcrypt' %>
+
+administrador:
+  nome: Admin Teste
+  email: admin@teste.com
+  encrypted_password: <%= BCrypt::Password.create('123456') %>
+
+colaborador:
+  nome: Colaborador Teste
+  email: colaborador@teste.com
+  encrypted_password: <%= BCrypt::Password.create('123456') %>
+
+morador:
+  nome: Morador Teste
+  email: morador@teste.com
+  encrypted_password: <%= BCrypt::Password.create('123456') %>
+
+morador_dois:
+  nome: Morador Dois
+  email: morador2@teste.com
+  encrypted_password: <%= BCrypt::Password.create('123456') %>

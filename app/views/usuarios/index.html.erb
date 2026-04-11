@@ -1,0 +1,27 @@
+<h1>Usuários</h1>
+<%= link_to "Novo Usuário", new_usuario_path %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Email</th>
+      <th>Papel</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @usuarios.each do |usuario| %>
+      <tr>
+        <td><%= usuario.nome %></td>
+        <td><%= usuario.email %></td>
+        <td><%= usuario.papeis.map(&:nome).join(", ") %></td>
+        <td>
+          <%= link_to "Ver", usuario_path(usuario) %>
+          <%= link_to "Editar", edit_usuario_path(usuario) %>
+          <%= link_to "Remover", usuario_path(usuario), data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

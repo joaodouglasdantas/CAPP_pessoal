@@ -1,0 +1,24 @@
+<%= form_with model: bloco do |f| %>
+  <% if bloco.errors.any? %>
+    <ul>
+      <% bloco.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= f.label :nome %>
+    <%= f.text_field :nome %>
+  </div>
+  <div>
+    <%= f.label :quantidade_andares, "Quantidade de andares" %>
+    <%= f.number_field :quantidade_andares, min: 1 %>
+  </div>
+  <div>
+    <%= f.label :unidades_por_andar, "Unidades por andar" %>
+    <%= f.number_field :unidades_por_andar, min: 1 %>
+  </div>
+
+  <%= f.submit %>
+<% end %>

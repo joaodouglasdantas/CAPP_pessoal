@@ -1,0 +1,29 @@
+<h1>Chamados</h1>
+<% if current_user.morador? %>
+  <%= link_to "Abrir Novo Chamado", new_chamado_path %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Unidade</th>
+      <th>Tipo</th>
+      <th>Status</th>
+      <th>Descrição</th>
+      <th>Aberto em</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @chamados.each do |chamado| %>
+      <tr>
+        <td><%= chamado.unidade.identificacao %></td>
+        <td><%= chamado.tipo_chamado.titulo %></td>
+        <td><%= chamado.status_chamado.nome %></td>
+        <td><%= truncate(chamado.descricao, length: 50) %></td>
+        <td><%= chamado.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+        <td><%= link_to "Ver", chamado %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

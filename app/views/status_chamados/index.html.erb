@@ -1,0 +1,24 @@
+<h1>Status de Chamado</h1>
+<%= link_to "Novo Status", new_status_chamado_path %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Padrão</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @status_chamados.each do |status| %>
+      <tr>
+        <td><%= status.nome %></td>
+        <td><%= status.padrao ? "Sim" : "Não" %></td>
+        <td>
+          <%= link_to "Editar", edit_status_chamado_path(status) %>
+          <%= link_to "Remover", status_chamado_path(status), data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

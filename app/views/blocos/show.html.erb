@@ -1,0 +1,26 @@
+<h1>Bloco <%= @bloco.nome %></h1>
+<p>Andares: <%= @bloco.quantidade_andares %></p>
+<p>Unidades por andar: <%= @bloco.unidades_por_andar %></p>
+
+<h2>Unidades</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Identificação</th>
+      <th>Andar</th>
+      <th>Moradores</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @bloco.unidades.order(:numero_andar, :numero_unidade).each do |unidade| %>
+      <tr>
+        <td><%= unidade.identificacao %></td>
+        <td><%= unidade.numero_andar %></td>
+        <td><%= unidade.moradores.map(&:nome).join(", ") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "Editar", edit_bloco_path(@bloco) %> |
+<%= link_to "Voltar", blocos_path %>
