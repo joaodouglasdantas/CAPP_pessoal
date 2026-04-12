@@ -10,6 +10,7 @@ class Bloco < ApplicationRecord
   after_create :gerar_unidades
   after_create :log_criacao
   after_update :log_atualizacao
+  after_update :regenerar_unidades, if: :estrutura_alterada?
 
   private
 
@@ -43,5 +44,14 @@ class Bloco < ApplicationRecord
       "#{campo}: '#{anterior}' → '#{novo}'"
     end.join(", ")
     LogAuditorium.registrar(Current.usuario, "Bloco #{nome} atualizado — #{detalhes}")
+  end
+
+  def estrutura_alterada?
+    saved_change_to_quantidade_andares? || saved_change_to_unidades_por_andar?
+  end
+
+  def regenerar_unidades
+    unidades.destroy_all
+    gerar_unidades
   end
 end
