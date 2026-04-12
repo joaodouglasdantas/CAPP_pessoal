@@ -32,6 +32,11 @@ class User < ApplicationRecord
     tem_papel?("morador")
   end
 
+  def tem_permissao?(nome_permissao)
+    return false if papeis.empty?
+    papeis.any? { |papel| papel.permissoes.exists?(nome: nome_permissao) }
+  end
+
   def log_criacao
     LogAuditorium.registrar(nil, "Usuário #{nome} (#{email}) criado no sistema")
   end
