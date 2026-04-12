@@ -16,7 +16,7 @@
         <td><%= status.padrao ? "Sim" : "Não" %></td>
         <td>
           <%= link_to "Editar", edit_status_chamado_path(status) %>
-          <%= link_to "Remover", status_chamado_path(status), data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+          <%= button_to "Remover", status_chamado_path(status), method: :delete, data: { turbo_confirm: "Tem certeza?" } %>
         </td>
       </tr>
     <% end %>

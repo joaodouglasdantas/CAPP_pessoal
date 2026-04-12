@@ -1,6 +1,6 @@
 class BlocosController < ApplicationController
   before_action :apenas_administrador!
-  before_action :set_bloco, only: [:show, :edit, :update, :destroy]
+  before_action :set_bloco, only: [ :show, :edit, :update, :destroy ]
 
   def index
       @blocos = Bloco.all

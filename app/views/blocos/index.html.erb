@@ -20,7 +20,7 @@
         <td>
           <%= link_to "Ver", bloco %>
           <%= link_to "Editar", edit_bloco_path(bloco) %>
-          <%= link_to "Remover", bloco, data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+          <%= button_to "Remover", bloco, method: :delete, data: { turbo_confirm: "Tem certeza?" } %>
         </td>
       </tr>
     <% end %>

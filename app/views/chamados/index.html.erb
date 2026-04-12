@@ -22,7 +22,12 @@
         <td><%= chamado.status_chamado.nome %></td>
         <td><%= truncate(chamado.descricao, length: 50) %></td>
         <td><%= chamado.created_at.strftime("%d/%m/%Y %H:%M") %></td>
-        <td><%= link_to "Ver", chamado %></td>
+        <td>
+          <%= link_to "Ver", chamado %>
+          <% if current_user.administrador? %>
+            <%= button_to "Remover", chamado_path(chamado), method: :delete, data: { turbo_confirm: "Tem certeza?" } %>
+          <% end %>
+        </td>
       </tr>
     <% end %>
   </tbody>

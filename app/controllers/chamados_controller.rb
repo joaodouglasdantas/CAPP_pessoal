@@ -1,5 +1,5 @@
 class ChamadosController < ApplicationController
-  before_action :set_chamado, only: [ :show, :edit, :update ]
+  before_action :set_chamado, only: [ :show, :edit, :update, :destroy ]
 
   def index
       if current_user.administrador? || current_user.colaborador?
@@ -32,6 +32,11 @@ class ChamadosController < ApplicationController
       @tipos = TipoChamado.all
       render :new, status: :unprocessable_entity
       end
+  end
+
+  def destroy
+    @chamado.destroy
+    redirect_to chamados_path, notice: "Chamado removido com sucesso."
   end
 
   def edit

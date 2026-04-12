@@ -19,7 +19,7 @@
         <td>
           <%= link_to "Ver", usuario_path(usuario) %>
           <%= link_to "Editar", edit_usuario_path(usuario) %>
-          <%= link_to "Remover", usuario_path(usuario), data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+          <%= button_to "Remover", usuario_path(usuario), method: :delete, data: { turbo_confirm: "Tem certeza?" } %>
         </td>
       </tr>
     <% end %>
