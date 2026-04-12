@@ -15,6 +15,7 @@ class User < ApplicationRecord
 
   after_create :log_criacao
   after_update :log_atualizacao
+  after_update :log_senha_alterada
 
   def tem_papel?(nome_papel)
     papeis.exists?(nome: nome_papel)
@@ -48,6 +49,17 @@ class User < ApplicationRecord
   end
 
   def log_atualizacao
-    LogAuditorium.registrar(nil, "Usuário #{nome} (#{email}) atualizado no sistema")
+    mudancas = saved_changes.except("updated_at", "encrypted_password", "remember_created_at")
+    return if mudancas.empty?
+    detalhes = mudancas.map do |campo, (anterior, novo)|
+      "#{campo}: '#{anterior}' → '#{novo}'"
+    end.join(", ")
+    LogAuditorium.registrar(nil, "Usuário #{nome} atualizado — #{detalhes}")
+  end
+
+  def log_senha_alterada
+    if saved_change_to_encrypted_password?
+      LogAuditorium.registrar(nil, "Senha do usuário #{nome} (#{email}) foi alterada")
+    end
   end
 end

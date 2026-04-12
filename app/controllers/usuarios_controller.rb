@@ -93,8 +93,10 @@ class UsuariosController < ApplicationController
     return if @usuario == current_user
     novo_papel = Papel.find_by(id: params[:papel_id])
     if novo_papel && !@usuario.papeis.include?(novo_papel)
+      papel_anterior = @usuario.papeis.first&.nome || "nenhum"
       @usuario.papeis.clear
       @usuario.papeis << novo_papel
+      LogAuditorium.registrar(current_user, "Papel do usuário #{@usuario.nome} alterado de '#{papel_anterior}' para '#{novo_papel.nome}'")
     end
   end
 end

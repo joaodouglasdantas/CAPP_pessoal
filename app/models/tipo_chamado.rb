@@ -4,6 +4,7 @@ class TipoChamado < ApplicationRecord
 
   before_destroy :log_remocao
 
+  after_create :log_criacao
   after_update :log_atualizacao
 
   private
@@ -12,7 +13,16 @@ class TipoChamado < ApplicationRecord
     LogAuditorium.registrar(nil, "Tipo de chamado '#{titulo}' removido do sistema")
   end
 
+  def log_criacao
+    LogAuditorium.registrar(nil, "Tipo de chamado '#{titulo}' criado no sistema")
+  end
+
   def log_atualizacao
-    LogAuditorium.registrar(nil, "Tipo de chamado '#{titulo}' atualizado no sistema")
+    mudancas = saved_changes.except("updated_at")
+    return if mudancas.empty?
+    detalhes = mudancas.map do |campo, (anterior, novo)|
+      "#{campo}: '#{anterior}' → '#{novo}'"
+    end.join(", ")
+    LogAuditorium.registrar(nil, "Tipo de chamado '#{titulo}' atualizado — #{detalhes}")
   end
 end

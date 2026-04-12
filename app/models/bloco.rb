@@ -37,6 +37,11 @@ class Bloco < ApplicationRecord
   end
 
   def log_atualizacao
-    LogAuditorium.registrar(nil, "Bloco #{nome} atualizado no sistema")
+    mudancas = saved_changes.except("updated_at")
+    return if mudancas.empty?
+    detalhes = mudancas.map do |campo, (anterior, novo)|
+      "#{campo}: '#{anterior}' → '#{novo}'"
+    end.join(", ")
+    LogAuditorium.registrar(nil, "Bloco #{nome} atualizado — #{detalhes}")
   end
 end
