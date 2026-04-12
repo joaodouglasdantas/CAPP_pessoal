@@ -4,7 +4,9 @@ require "rails/test_help"
 
 module ActiveSupport
   class TestCase
-    parallelize(workers: :number_of_processors, with: :threads)
+    # parallelize(workers: :number_of_processors, with: :threads)
+    parallelize(workers: 1)
+    # isso faz meus testes rodarem em sequência, evitando os conflitos de transação
     fixtures :all
     include Devise::Test::IntegrationHelpers
     # para o sign_in funcionar nos testes vou adicionar o helper do Devise
