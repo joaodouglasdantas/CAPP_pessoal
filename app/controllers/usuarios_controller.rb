@@ -1,6 +1,6 @@
 class UsuariosController < ApplicationController
   before_action :apenas_administrador!
-  before_action :set_usuario, only: [:show, :edit, :update, :destroy, :vincular_unidade, :desvincular_unidade]
+  before_action :set_usuario, only: [ :show, :edit, :update, :destroy, :vincular_unidade, :desvincular_unidade ]
 
   def index
     @usuarios = User.all.includes(:papeis)
@@ -31,9 +31,13 @@ class UsuariosController < ApplicationController
     @papeis = Papel.all
   end
 
+  def usuario_update_params
+    params.require(:user).permit(:nome, :email, :password, :password_confirmation)
+  end
+
   def update
     if @usuario.update(usuario_update_params)
-      redirect_to @usuario, notice: "Usuário atualizado com sucesso."
+      redirect_to usuario_path(@usuario), notice: "Usuário atualizado com sucesso."
     else
       @papeis = Papel.all
       render :edit, status: :unprocessable_entity

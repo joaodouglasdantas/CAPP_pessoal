@@ -1,8 +1,10 @@
 class Chamado < ApplicationRecord
   belongs_to :unidade
-  belongs_to :usuario, class_name: 'User', foreign_key: 'user_id'
+  belongs_to :usuario, class_name: "User", foreign_key: "user_id"
   belongs_to :tipo_chamado
   belongs_to :status_chamado, optional: true
+
+  has_many :comentarios, dependent: :destroy
 
   validates :descricao, presence: true
   validates :unidade, presence: true

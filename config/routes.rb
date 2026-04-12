@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   get "dashboard/index"
-  devise_for :users
+  devise_for :users, skip: [ :registrations, :passwords ]
 
   authenticated :user do
     root to: "dashboard#index", as: :authenticated_root
@@ -10,11 +10,11 @@ Rails.application.routes.draw do
 
   resources :blocos
   resources :chamados do
-    resources :comentarios, only: [:create]
+    resources :comentarios, only: [ :create ]
   end
   resources :tipos_chamado
   resources :status_chamados
-  resources :unidades, only: [:index, :show]
+  resources :unidades, only: [ :index, :show ]
 
   resources :usuarios do
     member do

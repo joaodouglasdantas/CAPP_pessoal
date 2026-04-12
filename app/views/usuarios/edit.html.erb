@@ -16,7 +16,14 @@
     <%= f.label :email %>
     <%= f.email_field :email %>
   </div>
-
+  <div>
+    <%= f.label :password, "Nova senha (deixe em branco para não alterar)" %>
+    <%= f.password_field :password, autocomplete: "off" %>
+  </div>
+  <div>
+    <%= f.label :password_confirmation, "Confirmar nova senha" %>
+    <%= f.password_field :password_confirmation, autocomplete: "off" %>
+  </div>
   <%= f.submit "Atualizar" %>
 <% end %>
 <%= link_to "Voltar", usuario_path(@usuario) %>
