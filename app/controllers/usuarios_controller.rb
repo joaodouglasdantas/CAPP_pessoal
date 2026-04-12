@@ -90,6 +90,7 @@ class UsuariosController < ApplicationController
 
   def atualizar_papel
     return unless params[:papel_id].present?
+    return if @usuario == current_user
     novo_papel = Papel.find_by(id: params[:papel_id])
     if novo_papel && !@usuario.papeis.include?(novo_papel)
       @usuario.papeis.clear
