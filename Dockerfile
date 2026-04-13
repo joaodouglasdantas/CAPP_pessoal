@@ -16,4 +16,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["bash", "-c", "rm -f tmp/pids/server.pid && rails db:create db:migrate db:seed && rails server -b 0.0.0.0"]
+CMD ["rails", "server", "-b", "0.0.0.0"]
