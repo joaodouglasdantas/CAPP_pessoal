@@ -20,6 +20,8 @@ Rails.application.routes.draw do
     member do
       post :vincular_unidade
       delete :desvincular_unidade
+      post :vincular_tipo_chamado
+      delete :desvincular_tipo_chamado
     end
   end
 

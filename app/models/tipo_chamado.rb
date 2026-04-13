@@ -1,4 +1,7 @@
 class TipoChamado < ApplicationRecord
+  has_many :colaborador_tipos_chamado, class_name: "ColaboradorTipoChamado", dependent: :destroy
+  has_many :colaboradores, through: :colaborador_tipos_chamado, source: :user
+
   validates :titulo, presence: true
   validates :sla_horas, presence: true, numericality: { greater_than: 0 }
 

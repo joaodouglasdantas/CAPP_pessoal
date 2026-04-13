@@ -14,12 +14,22 @@
   <%= link_to "Atualizar Status", edit_chamado_path(@chamado) %>
 <% end %>
 
-<h2>Comentários</h2>
 <% @comentarios.each do |comentario| %>
   <div>
     <strong><%= comentario.usuario.nome %></strong>
     <span><%= comentario.created_at.strftime("%d/%m/%Y %H:%M") %></span>
     <p><%= comentario.mensagem %></p>
+    <% if comentario.anexos.attached? %>
+      <% comentario.anexos.each do |anexo| %>
+        <% if anexo.image? %>
+          <%= image_tag url_for(anexo), style: "max-width: 300px" %>
+        <% elsif anexo.video? %>
+          <video width="300" controls>
+            <source src="<%= url_for(anexo) %>">
+          </video>
+        <% end %>
+      <% end %>
+    <% end %>
   </div>
 <% end %>
 
@@ -28,6 +38,10 @@
   <div>
     <%= f.label :mensagem %>
     <%= f.text_area :mensagem, rows: 3 %>
+  </div>
+  <div>
+    <%= f.label :anexos, "Anexos (imagens ou vídeos)" %>
+    <%= f.file_field :anexos, multiple: true, accept: "image/*,video/*" %>
   </div>
   <%= f.submit "Comentar" %>
 <% end %>

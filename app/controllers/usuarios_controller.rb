@@ -1,6 +1,6 @@
 class UsuariosController < ApplicationController
   before_action :apenas_administrador!
-  before_action :set_usuario, only: [ :show, :edit, :update, :destroy, :vincular_unidade, :desvincular_unidade ]
+  before_action :set_usuario, only: [ :show, :edit, :update, :destroy, :vincular_unidade, :desvincular_unidade, :vincular_tipo_chamado, :desvincular_tipo_chamado ]
 
   def index
     @usuarios = User.all.includes(:papeis)
@@ -25,6 +25,7 @@ class UsuariosController < ApplicationController
   def show
     @unidades_vinculadas = @usuario.unidades
     @todas_unidades = Unidade.all.includes(:bloco)
+    @todos_tipos = TipoChamado.all
   end
 
   def edit
@@ -65,6 +66,22 @@ class UsuariosController < ApplicationController
     MoradoresUnidade.find_by(unidade: unidade, user_id: @usuario.id)&.destroy
     LogAuditorium.registrar(current_user, "Usuário #{@usuario.nome} desvinculado da unidade #{unidade.identificacao} do bloco #{unidade.bloco.nome}")
     redirect_to usuario_path(@usuario), notice: "Unidade desvinculada com sucesso."
+  end
+
+  def vincular_tipo_chamado
+    tipo = TipoChamado.find(params[:tipo_chamado_id])
+    unless @usuario.tipos_chamado_responsavel.include?(tipo)
+      ColaboradorTipoChamado.create!(user: @usuario, tipo_chamado: tipo)
+      LogAuditorium.registrar(current_user, "Tipo de chamado '#{tipo.titulo}' vinculado ao colaborador #{@usuario.nome}")
+    end
+    redirect_to usuario_path(@usuario), notice: "Tipo de chamado vinculado com sucesso."
+  end
+
+  def desvincular_tipo_chamado
+    tipo = TipoChamado.find(params[:tipo_chamado_id])
+    ColaboradorTipoChamado.find_by(user: @usuario, tipo_chamado: tipo)&.destroy
+    LogAuditorium.registrar(current_user, "Tipo de chamado '#{tipo.titulo}' desvinculado do colaborador #{@usuario.nome}")
+    redirect_to usuario_path(@usuario), notice: "Tipo de chamado desvinculado com sucesso."
   end
 
   private

@@ -1,24 +1,24 @@
 class ComentariosController < ApplicationController
   def create
-      @chamado = Chamado.find(params[:chamado_id])
-      @comentario = Comentario.new(comentario_params)
-      @comentario.chamado = @chamado
-      @comentario.usuario = current_user
+    @chamado = Chamado.find(params[:chamado_id])
+    @comentario = Comentario.new(comentario_params)
+    @comentario.chamado = @chamado
+    @comentario.usuario = current_user
 
-      if @comentario.pode_comentar?
+    if @comentario.pode_comentar?
       if @comentario.save
-          redirect_to @chamado, notice: "Comentário adicionado."
+        redirect_to @chamado, notice: "Comentário adicionado."
       else
-          redirect_to @chamado, alert: "Erro ao adicionar comentário."
+        redirect_to @chamado, alert: "Erro ao adicionar comentário."
       end
-      else
+    else
       redirect_to @chamado, alert: "Você não tem permissão para comentar neste chamado."
-      end
+    end
   end
 
   private
 
   def comentario_params
-      params.require(:comentario).permit(:mensagem)
+    params.require(:comentario).permit(:mensagem, anexos: [])
   end
 end

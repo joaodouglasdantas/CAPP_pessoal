@@ -1,4 +1,6 @@
 class Comentario < ApplicationRecord
+  has_many_attached :anexos
+
   belongs_to :chamado
   belongs_to :usuario, class_name: "User", foreign_key: "user_id"
 

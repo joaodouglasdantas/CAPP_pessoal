@@ -41,5 +41,41 @@
   <%= f.submit "Vincular" %>
 <% end %>
 
+<% if @usuario.colaborador? %>
+  <h2>Tipos de Chamado Responsável</h2>
+  <% if @usuario.tipos_chamado_responsavel.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>SLA (horas)</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @usuario.tipos_chamado_responsavel.each do |tipo| %>
+          <tr>
+            <td><%= tipo.titulo %></td>
+            <td><%= tipo.sla_horas %></td>
+            <td>
+              <%= button_to "Desvincular", desvincular_tipo_chamado_usuario_path(@usuario, tipo_chamado_id: tipo.id), method: :delete, data: { turbo_confirm: "Tem certeza?" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>Nenhum tipo de chamado vinculado.</p>
+  <% end %>
+
+  <h3>Vincular Tipo de Chamado</h3>
+  <%= form_with url: vincular_tipo_chamado_usuario_path(@usuario), method: :post do |f| %>
+    <div>
+      <%= select_tag :tipo_chamado_id, options_from_collection_for_select(@todos_tipos, :id, :titulo), prompt: "Selecione um tipo" %>
+    </div>
+    <%= f.submit "Vincular" %>
+  <% end %>
+<% end %>
+
 <%= link_to "Editar", edit_usuario_path(@usuario) %> |
 <%= link_to "Voltar", usuarios_path %>

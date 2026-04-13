@@ -2,8 +2,12 @@ class ChamadosController < ApplicationController
   before_action :set_chamado, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    if current_user.administrador? || current_user.colaborador?
+    if current_user.administrador?
       @chamados = Chamado.all.includes(:unidade, :tipo_chamado, :status_chamado, :usuario)
+    elsif current_user.colaborador?
+      tipos_ids = current_user.tipos_chamado_responsavel.pluck(:id)
+      @chamados = Chamado.where(tipo_chamado_id: tipos_ids)
+                         .includes(:unidade, :tipo_chamado, :status_chamado, :usuario)
     else
       @chamados = Chamado.joins(unidade: :moradores_unidades)
                          .where(moradores_unidades: { user_id: current_user.id })

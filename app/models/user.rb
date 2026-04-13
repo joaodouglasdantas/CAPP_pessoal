@@ -8,6 +8,8 @@ class User < ApplicationRecord
   has_many :unidades, through: :moradores_unidades
   has_many :chamados, class_name: "Chamado", foreign_key: "user_id", dependent: :destroy
   has_many :comentarios, class_name: "Comentario", foreign_key: "user_id", dependent: :destroy
+  has_many :colaborador_tipos_chamado, class_name: "ColaboradorTipoChamado", foreign_key: "user_id", dependent: :destroy
+  has_many :tipos_chamado_responsavel, through: :colaborador_tipos_chamado, source: :tipo_chamado
 
   validates :nome, presence: true
 
