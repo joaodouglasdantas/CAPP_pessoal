@@ -3,23 +3,27 @@ class ChamadosController < ApplicationController
 
   def index
     if current_user.administrador?
-      @chamados = Chamado.ativos.includes(:unidade, :tipo_chamado, :status_chamado, :usuario)
+      base = params[:arquivados].present? ? Chamado.arquivados : Chamado.ativos
+      @chamados = base.includes(:unidade, :tipo_chamado, :status_chamado, :usuario)
       @tipos_list = TipoChamado.all
+      @blocos_list = Bloco.all
     elsif current_user.colaborador?
       tipos_ids = current_user.tipos_chamado_responsavel.pluck(:id)
-      @chamados = Chamado.ativos.where(tipo_chamado_id: tipos_ids)
-                         .includes(:unidade, :tipo_chamado, :status_chamado, :usuario)
+      unidades_ids = current_user.unidades.pluck(:id)
+      base = params[:arquivados].present? ? Chamado.arquivados : Chamado.ativos
+      @chamados = base.where("tipo_chamado_id IN (?) OR unidade_id IN (?)", tipos_ids, unidades_ids)
+                      .includes(:unidade, :tipo_chamado, :status_chamado, :usuario)
       @tipos_list = current_user.tipos_chamado_responsavel
     else
-      @chamados = Chamado.ativos.joins(unidade: :moradores_unidades)
-                         .where(moradores_unidades: { user_id: current_user.id })
-                         .includes(:unidade, :tipo_chamado, :status_chamado)
-      @tipos_list = TipoChamado.all
+      base = params[:arquivados].present? ? Chamado.arquivados : Chamado.ativos
+      @chamados = base.joins(unidade: :moradores_unidades)
+                      .where(moradores_unidades: { user_id: current_user.id })
+                      .includes(:unidade, :tipo_chamado, :status_chamado)
     end
 
     @chamados = aplicar_filtros(@chamados)
     @status_list = StatusChamado.all
-    @blocos_list = Bloco.all if current_user.administrador?
+    @tipos_list ||= TipoChamado.all
     @mostrando_arquivados = params[:arquivados].present?
   end
 

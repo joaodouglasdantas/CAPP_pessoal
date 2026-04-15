@@ -29,7 +29,7 @@
       <div>
         <label class="block text-xs mb-1" style="color: #94a3b8;">Status</label>
         <%= select_tag :status_id,
-            options_from_collection_for_select(@status_list, :id, :nome, params[:status_id]),
+            options_for_select(@status_list.map { |s| [s.nome.truncate(40), s.id] }, params[:status_id]),
             prompt: "Todos",
             class: "w-full rounded-lg px-3 py-2 text-sm outline-none",
             style: "background-color: #152338; border: 1px solid #2d4a6b; color: #f1f5f9;" %>
@@ -37,7 +37,7 @@
       <div>
         <label class="block text-xs mb-1" style="color: #94a3b8;">Tipo</label>
         <%= select_tag :tipo_id,
-            options_from_collection_for_select(@tipos_list, :id, :titulo, params[:tipo_id]),
+            options_for_select(@tipos_list.map { |t| [t.titulo.truncate(40), t.id] }, params[:tipo_id]),
             prompt: "Todos",
             class: "w-full rounded-lg px-3 py-2 text-sm outline-none",
             style: "background-color: #152338; border: 1px solid #2d4a6b; color: #f1f5f9;" %>
