@@ -22,7 +22,8 @@ class ChamadosController < ApplicationController
     end
 
     @chamados = aplicar_filtros(@chamados)
-    @status_list = StatusChamado.all
+    @status_list = StatusChamado.order(padrao: :desc, nome: :asc)
+      .sort_by { |s| s.nome.downcase == "concluído" ? 1 : 0 }
     @tipos_list ||= TipoChamado.all
     @mostrando_arquivados = params[:arquivados].present?
   end
@@ -70,7 +71,8 @@ class ChamadosController < ApplicationController
 
     @unidades = current_user.unidades
     @tipos = TipoChamado.all
-    @status_list = StatusChamado.all if current_user.administrador? || current_user.colaborador?
+    @status_list = StatusChamado.order(padrao: :desc, nome: :asc)
+      .sort_by { |s| s.nome.downcase == "concluído" ? 1 : 0 }
   end
 
   def update
@@ -104,7 +106,8 @@ class ChamadosController < ApplicationController
     else
       @unidades = current_user.unidades
       @tipos = TipoChamado.all
-      @status_list = StatusChamado.all if current_user.administrador? || current_user.colaborador?
+      @status_list = StatusChamado.order(padrao: :desc, nome: :asc)
+        .sort_by { |s| s.nome.downcase == "concluído" ? 1 : 0 }
       render :edit, status: :unprocessable_entity
     end
   end

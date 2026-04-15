@@ -48,6 +48,10 @@ class UsuariosController < ApplicationController
   end
 
   def vincular_unidade
+    if params[:unidade_id].blank?
+      redirect_to usuario_path(@usuario), alert: "Selecione uma unidade antes de vincular."
+      return
+    end
     unidade = Unidade.find(params[:unidade_id])
     unless @usuario.unidades.include?(unidade)
       MoradoresUnidade.create!(

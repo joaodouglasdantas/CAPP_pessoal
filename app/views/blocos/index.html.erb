@@ -20,7 +20,11 @@
     <tbody>
       <% @blocos.each do |bloco| %>
         <tr style="border-bottom: 1px solid #2d4a6b;" onmouseover="this.style.backgroundColor='#1e3352'" onmouseout="this.style.backgroundColor='transparent'">
-          <td style="padding: 12px 16px; color: #f1f5f9;"><%= bloco.nome %></td>
+          <td class="px-4 py-3 text-sm" 
+              title="<%= bloco.nome %>"
+              style="color: #f1f5f9; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help;">
+            <%= bloco.nome %>
+          </td>
           <td style="padding: 12px 16px; color: #f1f5f9;"><%= bloco.quantidade_andares %></td>
           <td style="padding: 12px 16px; color: #f1f5f9;"><%= bloco.unidades_por_andar %></td>
           <td style="padding: 12px 16px; color: #f1f5f9;"><%= bloco.unidades.count %></td>

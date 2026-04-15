@@ -17,7 +17,11 @@
     <tbody>
       <% @tipos_chamado.each do |tipo| %>
         <tr style="border-bottom: 1px solid #2d4a6b;">
-          <td class="px-4 py-3 text-sm" style="color: #f1f5f9; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= tipo.titulo %></td>
+          <td class="px-4 py-3 text-sm"
+              title="<%= tipo.titulo %>"
+              style="color: #f1f5f9; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help;">
+            <%= tipo.titulo %>
+          </td>
           <td class="px-4 py-3 text-sm" style="color: #f1f5f9;"><%= tipo.sla_horas %>h</td>
           <td class="px-4 py-3">
             <div class="flex gap-2">

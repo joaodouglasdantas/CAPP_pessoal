@@ -3,7 +3,8 @@ class StatusChamadosController < ApplicationController
   before_action :set_status_chamado, only: [ :edit, :update, :destroy ]
 
   def index
-    @status_chamados = StatusChamado.all
+    @status_chamados = StatusChamado.order(padrao: :desc, nome: :asc)
+      .sort_by { |s| s.nome.downcase == "concluído" ? 1 : 0 }
   end
 
   def new

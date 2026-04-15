@@ -2,11 +2,10 @@ class StatusChamado < ApplicationRecord
   has_many :chamados
 
   validates :nome, presence: true
-  validates :padrao, uniqueness: { conditions: -> { where(padrao: true) },
-    message: "já existe um status padrão definido" }
 
   before_destroy :log_remocao
   before_destroy :verificar_se_pode_deletar
+  before_save :desmarcar_padrao_anterior, if: -> { padrao? && padrao_changed? }
   before_update :verificar_remocao_padrao
 
   after_create :log_criacao
@@ -34,6 +33,10 @@ class StatusChamado < ApplicationRecord
       errors.add(:base, "Deve existir pelo menos um status padrão.")
       throw :abort
     end
+  end
+
+  def desmarcar_padrao_anterior
+    StatusChamado.where(padrao: true).where.not(id: id).update_all(padrao: false)
   end
 
   def log_remocao

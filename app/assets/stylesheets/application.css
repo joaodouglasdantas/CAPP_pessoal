@@ -16,3 +16,34 @@
   background-color: #7c3aed;
   border-radius: 999px;
 }
+
+.tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1a2e4a;
+  color: #f1f5f9;
+  border: 1px solid #7c3aed;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  white-space: normal;
+  max-width: 300px;
+  word-wrap: break-word;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+}
