@@ -2,7 +2,10 @@
   <h1 class="text-2xl font-bold" style="color: #a78bfa;">
     Chamados
     <% if @mostrando_arquivados %>
-      <span class="text-sm font-normal ml-2 px-2 py-1 rounded-full" style="background-color: #2d4a6b; color: #94a3b8;">Arquivados</span>
+      <span class="text-sm font-normal ml-2 px-2 py-1 rounded-full"
+            title="Estes são chamados que já foram finalizados e movidos para o histórico."
+            style="background-color: #2d4a6b; color: #94a3b8; cursor: help;"> Arquivados
+      </span>
     <% end %>
   </h1>
   <div class="flex gap-2">
@@ -46,7 +49,7 @@
         <div>
           <label class="block text-xs mb-1" style="color: #94a3b8;">Bloco</label>
           <%= select_tag :bloco_id,
-              options_from_collection_for_select(@blocos_list, :id, :nome, params[:bloco_id]),
+              options_for_select(@blocos_list.map { |b| [b.nome.truncate(25), b.id] }, params[:bloco_id]),
               prompt: "Todos",
               class: "w-full rounded-lg px-3 py-2 text-sm outline-none",
               style: "background-color: #152338; border: 1px solid #2d4a6b; color: #f1f5f9;" %>
@@ -73,39 +76,63 @@
 
 <div class="rounded-xl overflow-hidden" style="background-color: #1a2e4a; border: 1px solid #2d4a6b;">
   <div class="overflow-x-auto">
-    <table class="w-full">
+    <table class="w-full table-fixed">
       <thead>
         <tr style="border-bottom: 1px solid #2d4a6b;">
-          <th class="px-4 py-3 text-left text-sm font-medium" style="color: #94a3b8;">Unidade</th>
-          <th class="px-4 py-3 text-left text-sm font-medium" style="color: #94a3b8;">Tipo</th>
-          <th class="px-4 py-3 text-left text-sm font-medium" style="color: #94a3b8;">Status</th>
+          <th class="px-4 py-3 text-left text-sm font-medium w-32" style="color: #94a3b8;">Unidade</th>
+          <th class="px-4 py-3 text-left text-sm font-medium w-32" style="color: #94a3b8;">Tipo</th>
+          <th class="px-4 py-3 text-left text-sm font-medium w-32" style="color: #94a3b8;">Status</th>
           <th class="px-4 py-3 text-left text-sm font-medium hidden md:table-cell" style="color: #94a3b8;">Descrição</th>
-          <th class="px-4 py-3 text-left text-sm font-medium hidden md:table-cell" style="color: #94a3b8;">Aberto em</th>
-          <th class="px-4 py-3 text-left text-sm font-medium" style="color: #94a3b8;">Ações</th>
+          <th class="px-4 py-3 text-left text-sm font-medium hidden md:table-cell w-36" style="color: #94a3b8;">Aberto em</th>
+          <th class="px-4 py-3 text-left text-sm font-medium w-36" style="color: #94a3b8;">Ações</th>
         </tr>
       </thead>
       <tbody>
         <% @chamados.each do |chamado| %>
           <tr style="border-bottom: 1px solid #2d4a6b;">
-            <td class="px-4 py-3 text-sm" style="color: #f1f5f9;"><%= chamado.unidade.bloco.nome %> — <%= chamado.unidade.identificacao %></td>
-            <td class="px-4 py-3 text-sm" style="color: #f1f5f9;"><%= chamado.tipo_chamado.titulo %></td>
-            <td class="px-4 py-3">
-              <span class="text-xs px-2 py-1 rounded-full" style="background-color: #2d4a6b; color: #a78bfa;"><%= chamado.status_chamado.nome %></span>
+            <td class="px-4 py-3 text-sm w-32" style="color: #f1f5f9;">
+              <span class="block truncate"
+                    style="cursor: help;"
+                    title="<%= chamado.unidade.identificacao %> — <%= chamado.unidade.bloco.nome %>">
+                <%= truncate("#{chamado.unidade.identificacao} — #{chamado.unidade.bloco.nome}", length: 18) %>
+              </span>
             </td>
-            <td class="px-4 py-3 text-sm hidden md:table-cell" style="color: #94a3b8;"><%= truncate(chamado.descricao, length: 50) %></td>
-            <td class="px-4 py-3 text-sm hidden md:table-cell" style="color: #94a3b8;"><%= chamado.created_at.strftime("%d/%m/%Y %H:%M") %></td>
-            <td class="px-4 py-3">
-              <div class="flex gap-2">
+            <td class="px-4 py-3 text-sm w-32" style="color: #f1f5f9;">
+              <span class="block truncate"
+                    style="cursor: help;"
+                    title="<%= chamado.tipo_chamado.titulo %>">
+                <%= truncate(chamado.tipo_chamado.titulo, length: 20) %>
+              </span>
+            </td>
+            <td class="px-4 py-3 w-32">
+              <span class="text-xs px-2 py-1 rounded-full inline-block truncate max-w-full"
+                    title="<%= chamado.status_chamado.nome %>"
+                    style="background-color: #2d4a6b; color: #a78bfa; cursor: help;">
+                <%= truncate(chamado.status_chamado.nome, length: 18) %>
+              </span>
+            </td>
+            <td class="px-4 py-3 text-sm hidden md:table-cell"
+                title="<%= chamado.descricao %>"
+                style="color: #94a3b8; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help;">
+              <%= chamado.descricao %>
+            </td>
+            <td class="px-4 py-3 text-sm hidden md:table-cell w-36" style="color: #94a3b8;">
+              <%= chamado.created_at.strftime("%d/%m/%Y %H:%M") %>
+            </td>
+            <td class="px-4 py-3 w-36">
+              <div class="flex gap-2 flex-nowrap">
                 <%= link_to "Ver", chamado,
                   class: "text-xs px-3 py-1 rounded-lg hover:opacity-75 transition",
                   style: "background-color: #1e3352; border: 1px solid #2d4a6b; color: #f1f5f9;" %>
-                <% if current_user.administrador? || 
-                  (current_user.colaborador? && current_user.tipos_chamado_responsavel.include?(chamado.tipo_chamado)) || 
+
+                <% if current_user.administrador? ||
+                  (current_user.colaborador? && current_user.tipos_chamado_responsavel.include?(chamado.tipo_chamado)) ||
                   (chamado.usuario == current_user && chamado.status_chamado.padrao?) %>
                   <%= link_to "Editar", edit_chamado_path(chamado),
                     class: "text-xs px-3 py-1 rounded-lg hover:opacity-75 transition",
                     style: "background-color: #1e3352; border: 1px solid #a78bfa; color: #a78bfa;" %>
                 <% end %>
+
                 <% if current_user.administrador? %>
                   <%= button_to "Remover", chamado_path(chamado), method: :delete,
                       data: { turbo_confirm: "Tem certeza?" },

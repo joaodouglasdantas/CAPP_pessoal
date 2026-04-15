@@ -72,15 +72,27 @@
     <div class="space-y-3">
       <div>
         <p class="text-xs mb-1" style="color: #94a3b8;">Unidade</p>
-        <p class="text-sm" style="color: #f1f5f9;"><%= @chamado.unidade.bloco.nome %> — <%= @chamado.unidade.identificacao %></p>
+        <p class="text-sm"
+          title="<%= @chamado.unidade.identificacao %> — <%= @chamado.unidade.bloco.nome %>"
+          style="color: #f1f5f9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help;">
+          <%= "#{@chamado.unidade.identificacao} — #{@chamado.unidade.bloco.nome.truncate(30)}" %>
+        </p>
       </div>
       <div>
         <p class="text-xs mb-1" style="color: #94a3b8;">Tipo</p>
-        <p class="text-sm" style="color: #f1f5f9;"><%= @chamado.tipo_chamado.titulo %></p>
+        <p class="text-sm"
+          title="<%= @chamado.tipo_chamado.titulo %>"
+          style="color: #f1f5f9; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help;">
+          <%= @chamado.tipo_chamado.titulo %>
+        </p>
       </div>
       <div>
         <p class="text-xs mb-1" style="color: #94a3b8;">Status</p>
-        <span class="text-xs px-2 py-1 rounded-full" style="background-color: #2d4a6b; color: #a78bfa;"><%= @chamado.status_chamado.nome %></span>
+        <span class="text-xs px-2 py-1 rounded-full"
+              title="<%= @chamado.status_chamado.nome %>"
+              style="background-color: #2d4a6b; color: #a78bfa; display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help;">
+          <%= @chamado.status_chamado.nome.truncate(40) %>
+        </span>
       </div>
       <div>
         <p class="text-xs mb-1" style="color: #94a3b8;">Aberto por</p>

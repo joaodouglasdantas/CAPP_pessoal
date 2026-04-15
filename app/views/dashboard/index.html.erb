@@ -41,19 +41,26 @@
       </div>
       <% if @chamados.any? %>
         <% @chamados.order(created_at: :desc).limit(5).each do |chamado| %>
-          <div class="flex justify-between items-center px-6 py-3" style="border-bottom: 1px solid #2d4a6b;">
-            <div>
-              <p class="text-sm" style="color: #f1f5f9;">#<%= chamado.id %> — <%= chamado.tipo_chamado.titulo %></p>
+          <div class="flex justify-between items-center gap-3 px-6 py-3" style="border-bottom: 1px solid #2d4a6b;">
+            <div style="min-width: 0;">
+              <p class="text-sm truncate"
+                title="<%= chamado.tipo_chamado.titulo %>"
+                style="color: #f1f5f9; cursor: help;">
+                #<%= chamado.id %> — <%= chamado.tipo_chamado.titulo %>
+              </p>
               <p class="text-xs" style="color: #94a3b8;"><%= chamado.unidade.identificacao %></p>
             </div>
-            <span class="text-xs px-2 py-1 rounded-full" style="background-color: #2d4a6b; color: #a78bfa;"><%= chamado.status_chamado.nome %></span>
+            <span class="text-xs px-2 py-1 rounded-full flex-shrink-0"
+                  title="<%= chamado.status_chamado.nome %>"
+                  style="background-color: #2d4a6b; color: #a78bfa; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help; align-self: center;">
+              <%= chamado.status_chamado.nome.truncate(18) %>
+            </span>
           </div>
         <% end %>
       <% else %>
         <p class="px-6 py-4 text-sm" style="color: #94a3b8;">Nenhum chamado ainda.</p>
       <% end %>
     </div>
-  </div>
 
 <% elsif current_user.colaborador? %>
   <h1 class="text-2xl font-bold mb-6" style="color: #a78bfa;">Dashboard</h1>

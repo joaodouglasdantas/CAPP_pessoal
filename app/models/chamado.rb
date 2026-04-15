@@ -38,8 +38,12 @@ class Chamado < ApplicationRecord
   end
 
   def registrar_finalizacao
-    if status_chamado_id_changed? && status_chamado.nome.downcase == "concluído"
-      self.finalizado_em = Time.current
+    if status_chamado_id_changed?
+      if status_chamado.nome.downcase == "concluído"
+        self.finalizado_em = Time.current
+      else
+        self.finalizado_em = nil
+      end
     end
   end
 

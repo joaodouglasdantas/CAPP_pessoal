@@ -20,7 +20,7 @@
 
       <div class="mb-4">
         <%= f.label :unidade_id, "Unidade", class: "block text-sm mb-2", style: "color: #94a3b8;" %>
-        <%= f.select :unidade_id, @unidades.map { |u| ["#{u.bloco.nome} — #{u.identificacao}", u.id] },
+        <%= f.select :unidade_id, @unidades.map { |u| ["#{u.identificacao} — #{u.bloco.nome.truncate(30)}", u.id] },
             { prompt: "Selecione uma unidade" },
             class: "w-full rounded-lg px-3 py-2 text-sm outline-none",
             style: "background-color: #152338; border: 1px solid #2d4a6b; color: #f1f5f9;" %>
@@ -28,7 +28,7 @@
 
       <div class="mb-4">
         <%= f.label :tipo_chamado_id, "Tipo de Chamado", class: "block text-sm mb-2", style: "color: #94a3b8;" %>
-        <%= f.select :tipo_chamado_id, @tipos.map { |t| [t.titulo, t.id] },
+        <%= f.select :tipo_chamado_id, @tipos.map { |t| [t.titulo.truncate(50), t.id] },
             { prompt: "Selecione um tipo" },
             class: "w-full rounded-lg px-3 py-2 text-sm outline-none",
             style: "background-color: #152338; border: 1px solid #2d4a6b; color: #f1f5f9;" %>
