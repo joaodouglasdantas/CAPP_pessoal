@@ -13,7 +13,7 @@
           <th class="px-4 py-3 text-left text-sm font-medium w-48" style="color: #94a3b8;">Nome</th>
           <th class="px-4 py-3 text-left text-sm font-medium hidden md:table-cell" style="color: #94a3b8;">Email</th>
           <th class="px-4 py-3 text-left text-sm font-medium w-32" style="color: #94a3b8;">Papel</th>
-          <th class="px-4 py-3 text-left text-sm font-medium w-44" style="color: #94a3b8;">Ações</th>
+          <th class="px-4 py-3 text-left text-sm font-medium w-56" style="color: #94a3b8;">Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -40,8 +40,8 @@
                 <%= truncate(usuario.papeis.map(&:nome).join(", "), length: 18) %>
               </span>
             </td>
-            <td class="px-4 py-3 w-44">
-              <div class="flex gap-2 flex-wrap">
+            <td class="px-4 py-3 w-56">
+              <div class="flex gap-2 flex-nowrap">
                 <%= link_to "Ver", usuario_path(usuario),
                     class: "text-xs px-3 py-1 rounded-lg hover:opacity-75 transition",
                     style: "background-color: #1e3352; border: 1px solid #2d4a6b; color: #f1f5f9;" %>

@@ -6,46 +6,50 @@
 </div>
 
 <div class="rounded-xl overflow-hidden" style="background-color: #1a2e4a; border: 1px solid #2d4a6b;">
-  <table class="w-full">
-    <thead>
-      <tr style="border-bottom: 1px solid #2d4a6b;">
-        <th class="px-4 py-3 text-left text-sm font-medium" style="color: #94a3b8;">Nome</th>
-        <th class="px-4 py-3 text-left text-sm font-medium" style="color: #94a3b8;">Padrão</th>
-        <th class="px-4 py-3 text-left text-sm font-medium" style="color: #94a3b8;">Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @status_chamados.each do |status| %>
+  <div class="overflow-x-auto">
+    <table class="w-full table-fixed">
+      <thead>
         <tr style="border-bottom: 1px solid #2d4a6b;">
-          <td class="px-4 py-3 text-sm"
-              title="<%= status.nome %>"
-              style="color: #f1f5f9; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help;">
-            <%= status.nome %>
-          </td>
-          <td class="px-4 py-3">
-            <% if status.padrao %>
-              <span class="text-xs px-2 py-1 rounded-full" style="background-color: #064e3b; color: #6ee7b7;">Sim</span>
-            <% else %>
-              <span class="text-xs px-2 py-1 rounded-full" style="background-color: #2d4a6b; color: #94a3b8;">Não</span>
-            <% end %>
-          </td>
-          <td class="px-4 py-3">
-            <div class="flex gap-2">
-              <% if status.nome.downcase == "concluído" %>
-                <span class="text-xs px-3 py-1 rounded-lg" style="color: #64748b; border: 1px solid #2d4a6b;">Protegido</span>
-              <% else %>
-                <%= link_to "Editar", edit_status_chamado_path(status),
-                    class: "text-xs px-3 py-1 rounded-lg hover:opacity-75 transition",
-                    style: "background-color: #1e3352; border: 1px solid #2d4a6b; color: #f1f5f9;" %>
-                <%= button_to "Remover", status_chamado_path(status), method: :delete,
-                    data: { turbo_confirm: "Tem certeza?" },
-                    class: "text-xs px-3 py-1 rounded-lg hover:opacity-75 transition cursor-pointer",
-                    style: "background-color: #1e3352; border: 1px solid #ef4444; color: #ef4444;" %>
-              <% end %>
-            </div>
-          </td>
+          <th class="px-4 py-3 text-left text-sm font-medium" style="color: #94a3b8;">Nome</th>
+          <th class="px-4 py-3 text-left text-sm font-medium w-24" style="color: #94a3b8;">Padrão</th>
+          <th class="px-4 py-3 text-left text-sm font-medium w-44" style="color: #94a3b8;">Ações</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @status_chamados.each do |status| %>
+          <tr style="border-bottom: 1px solid #2d4a6b;">
+            <td class="px-4 py-3 text-sm" style="color: #f1f5f9;">
+              <span class="block truncate"
+                    title="<%= status.nome %>"
+                    style="cursor: help;">
+                <%= status.nome %>
+              </span>
+            </td>
+            <td class="px-4 py-3 w-24">
+              <% if status.padrao %>
+                <span class="text-xs px-2 py-1 rounded-full" style="background-color: #064e3b; color: #6ee7b7;">Sim</span>
+              <% else %>
+                <span class="text-xs px-2 py-1 rounded-full" style="background-color: #2d4a6b; color: #94a3b8;">Não</span>
+              <% end %>
+            </td>
+            <td class="px-4 py-3 w-44">
+              <div class="flex gap-2 flex-nowrap">
+                <% if status.nome.downcase == "concluído" %>
+                  <span class="text-xs px-3 py-1 rounded-lg" style="color: #64748b; border: 1px solid #2d4a6b;">Protegido</span>
+                <% else %>
+                  <%= link_to "Editar", edit_status_chamado_path(status),
+                      class: "text-xs px-3 py-1 rounded-lg hover:opacity-75 transition",
+                      style: "background-color: #1e3352; border: 1px solid #a78bfa; color: #a78bfa;" %>
+                  <%= button_to "Remover", status_chamado_path(status), method: :delete,
+                      data: { turbo_confirm: "Tem certeza?" },
+                      class: "text-xs px-3 py-1 rounded-lg hover:opacity-75 transition cursor-pointer",
+                      style: "background-color: #1e3352; border: 1px solid #ef4444; color: #ef4444;" %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>
