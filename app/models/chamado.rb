@@ -44,7 +44,7 @@ class Chamado < ApplicationRecord
   end
 
   def log_criacao
-    LogAuditorium.registrar(usuario, "Chamado ##{id} aberto por #{usuario.nome} na unidade #{unidade.identificacao}")
+    LogAuditorium.registrar(usuario, "Chamado ##{id} aberto por #{usuario.nome} na unidade #{unidade.identificacao} do bloco #{unidade.bloco.nome}")
   end
 
   def log_atualizacao

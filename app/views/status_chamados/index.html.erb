@@ -17,7 +17,7 @@
     <tbody>
       <% @status_chamados.each do |status| %>
         <tr style="border-bottom: 1px solid #2d4a6b;">
-          <td class="px-4 py-3 text-sm" style="color: #f1f5f9;"><%= status.nome %></td>
+          <td class="px-4 py-3 text-sm" style="color: #f1f5f9; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= status.nome %></td>
           <td class="px-4 py-3">
             <% if status.padrao %>
               <span class="text-xs px-2 py-1 rounded-full" style="background-color: #064e3b; color: #6ee7b7;">Sim</span>
