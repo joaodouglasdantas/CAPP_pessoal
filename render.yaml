@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: meu-sistema-rails
+    name: capp
     env: docker
     plan: free
     dockerfilePath: ./Dockerfile
