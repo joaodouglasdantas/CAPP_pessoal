@@ -87,7 +87,7 @@
       <tbody>
         <% @chamados.each do |chamado| %>
           <tr style="border-bottom: 1px solid #2d4a6b;">
-            <td class="px-4 py-3 text-sm" style="color: #f1f5f9;"><%= chamado.unidade.identificacao %></td>
+            <td class="px-4 py-3 text-sm" style="color: #f1f5f9;"><%= chamado.unidade.bloco.nome %> — <%= chamado.unidade.identificacao %></td>
             <td class="px-4 py-3 text-sm" style="color: #f1f5f9;"><%= chamado.tipo_chamado.titulo %></td>
             <td class="px-4 py-3">
               <span class="text-xs px-2 py-1 rounded-full" style="background-color: #2d4a6b; color: #a78bfa;"><%= chamado.status_chamado.nome %></span>
