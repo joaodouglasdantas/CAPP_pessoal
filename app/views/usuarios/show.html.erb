@@ -10,7 +10,7 @@
   </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 items-start">
   <div class="rounded-xl p-6" style="background-color: #1a2e4a; border: 1px solid #2d4a6b;">
     <h2 class="text-base font-semibold mb-4" style="color: #f1f5f9;">Informações</h2>
     <div class="space-y-3">
@@ -45,20 +45,70 @@
       <% end %>
 
       <%= form_with url: vincular_unidade_usuario_path(@usuario), method: :post do |f| %>
-        <div class="flex gap-2">
-          <%= select_tag :unidade_id,
-              grouped_options_for_select(
-                @todas_unidades.group_by { |u| u.bloco.nome }
-                              .transform_values { |unidades| unidades.map { |u| [u.identificacao, u.id] } }
-              ),
-              prompt: "Selecione uma unidade",
-              class: "flex-1 rounded-lg px-3 py-2 text-sm outline-none",
-              style: "background-color: #152338; border: 1px solid #2d4a6b; color: #f1f5f9;" %>
+        <div class="flex flex-col gap-2">
+          <select id="select_bloco"
+              class="flex-1 rounded-lg px-3 py-2 text-sm outline-none"
+              style="background-color: #152338; border: 1px solid #2d4a6b; color: #f1f5f9;">
+            <option value="">Selecione um bloco</option>
+            <% @todas_unidades.group_by { |u| u.bloco }.each do |bloco, unidades| %>
+              <option value="<%= bloco.id %>"><%= bloco.nome %></option>
+            <% end %>
+          </select>
+
+          <div id="lista_unidades" class="flex flex-col gap-1" style="max-height: 200px; overflow-y: auto;"></div>
+
+          <input type="hidden" name="unidade_id" id="unidade_id_input" value="">
+          <p id="unidade_selecionada" class="text-xs" style="color: #a78bfa; display: none;"></p>
+
           <%= f.submit "Vincular",
               class: "px-3 py-2 rounded-lg text-sm text-white cursor-pointer hover:opacity-75",
               style: "background-color: #7c3aed; border: none;" %>
         </div>
       <% end %>
+
+      <script>
+        const unidadesPorBloco = {
+          <% @todas_unidades.group_by { |u| u.bloco_id }.each do |bloco_id, unidades| %>
+            "<%= bloco_id %>": [
+              <% unidades.each do |u| %>
+                { id: "<%= u.id %>", nome: "<%= u.identificacao %>" },
+              <% end %>
+            ],
+          <% end %>
+        };
+
+        document.getElementById('select_bloco').addEventListener('change', function() {
+          const blocoId = this.value;
+          const lista = document.getElementById('lista_unidades');
+          const input = document.getElementById('unidade_id_input');
+          const label = document.getElementById('unidade_selecionada');
+
+          lista.innerHTML = '';
+          input.value = '';
+          label.style.display = 'none';
+
+          if (blocoId && unidadesPorBloco[blocoId]) {
+            unidadesPorBloco[blocoId].forEach(function(unidade) {
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              btn.textContent = unidade.nome;
+              btn.style.cssText = 'background-color: #152338; border: 1px solid #2d4a6b; color: #f1f5f9; padding: 6px 12px; border-radius: 8px; text-align: left; font-size: 0.875rem; cursor: pointer;';
+              btn.onclick = function() {
+                document.querySelectorAll('#lista_unidades button').forEach(b => {
+                  b.style.borderColor = '#2d4a6b';
+                  b.style.backgroundColor = '#152338';
+                });
+                btn.style.borderColor = '#7c3aed';
+                btn.style.backgroundColor = '#1e3352';
+                input.value = unidade.id;
+                label.textContent = 'Selecionado: ' + unidade.nome;
+                label.style.display = 'block';
+              };
+              lista.appendChild(btn);
+            });
+          }
+        });
+      </script>
     </div>
   <% end %>
 </div>

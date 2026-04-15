@@ -23,3 +23,8 @@ body {
 input[type="password"]::-ms-reveal {
     filter: invert(1);
 }
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  filter: invert(1) opacity(0.5);
+}
