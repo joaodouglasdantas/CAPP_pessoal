@@ -7,8 +7,9 @@ class StatusChamadoTest < ActiveSupport::TestCase
   end
 
   test "deve existir apenas um status padrão" do
-    status_duplicado = StatusChamado.new(nome: "Novo", padrao: true)
-    assert_not status_duplicado.valid?
+    status_novo = StatusChamado.create!(nome: "Em Aberto", padrao: true)
+    assert status_novo.padrao?
+    assert_not status_chamados(:aberto).reload.padrao?
   end
 
   test "nao deve permitir deletar status padrao" do
