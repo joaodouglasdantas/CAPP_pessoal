@@ -12,6 +12,9 @@ Sistema web desenvolvido em Ruby on Rails para gerenciamento de chamados em cond
 
 ---
 
+<a href="https://documento.com/" target="_blank" rel="noopener noreferrer">
+seu texto que vc quiser aq </a>
+
 ## Stack
 
 - Ruby on Rails 8.1.3
