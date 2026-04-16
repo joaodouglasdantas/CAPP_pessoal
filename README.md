@@ -91,9 +91,10 @@ docker compose restart web
 
 ## Documentação completa
 
-A documentação técnica completa está disponível em:
+A documentação técnica completa está disponível em: </br>
 <a href="https://github.com/joaodouglasdantas/dunnas_CAPP/blob/main/Documentacao_Capp.pdf" target="_blank">
 Documentacao_Capp.pdf </a>
+</br>
 <a href="https://github.com/joaodouglasdantas/dunnas_CAPP/blob/main/Documentacao_Capp.docx" target="_blank">
 Documentacao_Capp.docx </a>
 
