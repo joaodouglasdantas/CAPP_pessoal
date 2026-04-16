@@ -87,6 +87,12 @@
         </p>
       </div>
       <div>
+        <p class="text-xs mb-1" style="color: var(--text-muted);">Prazo máximo para resolução</p>
+        <p class="text-sm" style="color: var(--text);">
+          <%= (@chamado.created_at + @chamado.tipo_chamado.sla_horas.hours).strftime("%d/%m/%Y %H:%M") %>
+        </p>
+      </div>
+      <div>
         <p class="text-xs mb-1" style="color: var(--text-muted);">Status</p>
         <span class="text-xs px-2 py-1 rounded-full"
               title="<%= @chamado.status_chamado.nome %>"

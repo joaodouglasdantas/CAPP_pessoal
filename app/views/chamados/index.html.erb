@@ -83,6 +83,9 @@
           <th class="px-4 py-3 text-left text-sm font-medium" style="color: var(--text-muted);">Tipo</th>
           <th class="px-4 py-3 text-left text-sm font-medium" style="color: var(--text-muted);">Status</th>
           <th class="px-4 py-3 text-left text-sm font-medium hidden md:table-cell" style="color: var(--text-muted);">Descrição</th>
+          <% if current_user.colaborador? %>
+            <th class="px-4 py-3 text-left text-sm font-medium hidden md:table-cell" style="color: var(--text-muted);">Prazo SLA</th>
+          <% end %>
           <th class="px-4 py-3 text-left text-sm font-medium hidden md:table-cell" style="color: var(--text-muted);">Aberto em</th>
           <th class="px-4 py-3 text-left text-sm font-medium" style="color: var(--text-muted);">Ações</th>
         </tr>
@@ -116,6 +119,11 @@
                 style="color: var(--text-muted); max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: help;">
               <%= chamado.descricao %>
             </td>
+            <% if current_user.colaborador? %>
+              <td class="px-4 py-3 text-sm hidden md:table-cell" style="color: var(--text-muted);">
+                <%= (chamado.created_at + chamado.tipo_chamado.sla_horas.hours).strftime("%d/%m/%Y %H:%M") %>
+              </td>
+            <% end %>
             <td class="px-4 py-3 text-sm hidden md:table-cell" style="color: var(--text-muted);">
               <%= chamado.created_at.strftime("%d/%m/%Y %H:%M") %>
             </td>
