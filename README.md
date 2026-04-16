@@ -29,12 +29,15 @@ Sistema web desenvolvido em Ruby on Rails para gerenciamento de chamados em cond
 
 1. Clone o repositório
 2. Copie `.env.example` para `.env` e preencha as variáveis
-3. Execute `docker compose up --build`
+3. Execute:
+```bash
+docker compose up --build
+```
 4. Em outro terminal, crie e migre o banco:
 ```bash
 docker compose exec web rails db:create db:migrate db:seed
 ```
-5. Acesse `http://localhost:3000`
+1. Acesse `http://localhost:3000`
 
 ---
 
@@ -85,8 +88,10 @@ docker compose restart web
 
 ## Documentação completa
 
-A documentação técnica completa está disponível em: `Documentacao_Capp.pdf ou Documentacao_Capp.docx`
+A documentação técnica completa está disponível em: `Documentacao_Capp.pdf: https://github.com/joaodouglasdantas/dunnas_CAPP/blob/main/Documentacao_Capp.pdf ou Documentacao_Capp.docx: https://github.com/joaodouglasdantas/dunnas_CAPP/blob/main/Documentacao_Capp.docx`
 
 ---
 
 > ⚠️ O sistema está hospedado no Render (plano gratuito) e pode demorar entre 30 e 60 segundos para responder na primeira tentativa de acesso do dia.
+
+🌐 **Sistema em produção:** https://meu-sistema-rails.onrender.com/
