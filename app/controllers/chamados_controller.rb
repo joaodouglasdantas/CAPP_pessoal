@@ -34,8 +34,8 @@ class ChamadosController < ApplicationController
   end
 
   def new
-    if current_user.colaborador?
-      redirect_to chamados_path, alert: "Colaboradores não podem abrir chamados."
+    unless current_user.morador?
+      redirect_to chamados_path, alert: "Apenas moradores podem abrir chamados."
       return
     end
     @chamado = Chamado.new
@@ -44,8 +44,8 @@ class ChamadosController < ApplicationController
   end
 
   def create
-    if current_user.colaborador?
-      redirect_to chamados_path, alert: "Colaboradores não podem abrir chamados."
+    unless current_user.morador?
+      redirect_to chamados_path, alert: "Apenas moradores podem abrir chamados."
       return
     end
     @chamado = Chamado.new(chamado_params)
@@ -60,6 +60,10 @@ class ChamadosController < ApplicationController
   end
 
   def destroy
+    unless current_user.administrador?
+      redirect_to chamados_path, alert: "Acesso negado."
+      return
+    end
     @chamado.destroy
     redirect_to chamados_path, notice: "Chamado removido com sucesso."
   end
@@ -113,11 +117,11 @@ class ChamadosController < ApplicationController
   end
 
   def remover_anexo
-    unless @chamado.usuario == current_user || current_user.administrador?
+    unless @chamado.usuario == current_user
       redirect_to chamado_path(@chamado), alert: "Sem permissão." and return
     end
 
-    unless @chamado.status_chamado.padrao? || current_user.administrador?
+    unless @chamado.status_chamado.padrao?
       redirect_to chamado_path(@chamado), alert: "Não é possível editar um chamado em andamento." and return
     end
 
@@ -127,7 +131,7 @@ class ChamadosController < ApplicationController
   end
 
   def remover_anexo_get
-    unless @chamado.usuario == current_user || current_user.administrador?
+    unless @chamado.usuario == current_user
       redirect_to chamado_path(@chamado), alert: "Sem permissão." and return
     end
 
