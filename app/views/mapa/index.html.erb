@@ -5,9 +5,29 @@
   <div id="mapa-container" style="width: 100%; height: 100%; background: #1a1a2e;"></div>
 </div>
 
+<div id="tooltip" style="
+  display: none;
+  position: fixed;
+  background: rgba(0,0,0,0.75);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  pointer-events: none;
+  z-index: 100;
+  line-height: 1.6;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.15);
+"></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
   const container = document.getElementById('mapa-container');
+
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  const tooltip = document.getElementById('tooltip');
+  let blocoMeshes = [];
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x1a1a2e);
@@ -75,10 +95,12 @@
         const geo = new THREE.BoxGeometry(larguraBloco, alturaBloco, PROFUNDIDADE_BLOCO);
         const mat = new THREE.MeshLambertMaterial({ color: CORES[i % CORES.length] });
         const mesh = new THREE.Mesh(geo, mat);
+        mesh.userData = { nome: bloco.nome, andares: bloco.quantidade_andares, unidades: bloco.unidades_por_andar };
         mesh.position.set(x, alturaBloco / 2, z);
         mesh.castShadow = true;
         mesh.receiveShadow = true;
         scene.add(mesh);
+        blocoMeshes.push(mesh);
 
         for (let a = 1; a < bloco.quantidade_andares; a++) {
           const lGeo = new THREE.BoxGeometry(larguraBloco + 0.1, 0.15, PROFUNDIDADE_BLOCO + 0.1);
@@ -112,6 +134,41 @@
   });
   container.addEventListener('wheel', e => {
     spherical.radius = Math.max(40, Math.min(300, spherical.radius + e.deltaY * 0.2));
+  });
+
+  container.addEventListener('mousemove', e => {
+    if (isDragging) {
+      tooltip.style.display = 'none';
+      return;
+    }
+
+    const rect = container.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(blocoMeshes);
+
+    if (intersects.length > 0) {
+      const dados = intersects[0].object.userData;
+      tooltip.style.display = 'block';
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+      tooltip.innerHTML = `
+        <strong>${dados.nome}</strong><br>
+        Andares: ${dados.andares}<br>
+        Unidades por andar: ${dados.unidades}<br>
+        Total de unidades: ${dados.andares * dados.unidades}
+      `;
+      container.style.cursor = 'pointer';
+    } else {
+      tooltip.style.display = 'none';
+      container.style.cursor = 'default';
+    }
+  });
+
+  container.addEventListener('mouseleave', () => {
+    tooltip.style.display = 'none';
   });
 
   function animate() {
