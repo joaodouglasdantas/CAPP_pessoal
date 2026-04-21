@@ -1,13 +1,14 @@
-<div class="p-6">
-  <h1 class="text-2xl font-bold mb-4">Mapa do Condomínio</h1>
-  <div id="mapa-container" style="width: 100%; height: 600px; background: #1a1a2e; border-radius: 12px;"></div>
+<div style="margin: 0 -2rem -24px; position: relative; height: calc(100vh - 80px);">
+  <div style="position: absolute; top: 16px; left: 20px; z-index: 10; color: white; font-size: 1.25rem; font-weight: bold; text-shadow: 0 1px 4px rgba(0,0,0,0.6);">
+    Mapa do Condomínio
+  </div>
+  <div id="mapa-container" style="width: 100%; height: 100%; background: #1a1a2e;"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
   const container = document.getElementById('mapa-container');
 
-  // Cena, câmera e renderer
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x1a1a2e);
 
@@ -20,7 +21,12 @@
   renderer.shadowMap.enabled = true;
   container.appendChild(renderer.domElement);
 
-  // Iluminação
+  window.addEventListener('resize', () => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+  });
+
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
 
@@ -29,7 +35,6 @@
   dirLight.castShadow = true;
   scene.add(dirLight);
 
-  // Chão
   const groundGeo = new THREE.PlaneGeometry(500, 500);
   const groundMat = new THREE.MeshLambertMaterial({ color: 0x2d4a22 });
   const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -37,7 +42,6 @@
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // Constantes de layout
   const BLOCOS_POR_LINHA = 5;
   const LARGURA_UNIDADE = 4;
   const ALTURA_ANDAR = 3;
@@ -68,7 +72,6 @@
         const x = col * (larguraBloco + GAP_X) - offsetX + larguraBloco / 2;
         const z = linha * (PROFUNDIDADE_BLOCO + GAP_Z) - offsetZ + PROFUNDIDADE_BLOCO / 2;
 
-        // Corpo do prédio
         const geo = new THREE.BoxGeometry(larguraBloco, alturaBloco, PROFUNDIDADE_BLOCO);
         const mat = new THREE.MeshLambertMaterial({ color: CORES[i % CORES.length] });
         const mesh = new THREE.Mesh(geo, mat);
@@ -77,7 +80,6 @@
         mesh.receiveShadow = true;
         scene.add(mesh);
 
-        // Linhas de andares (wireframe horizontal)
         for (let a = 1; a < bloco.quantidade_andares; a++) {
           const lGeo = new THREE.BoxGeometry(larguraBloco + 0.1, 0.15, PROFUNDIDADE_BLOCO + 0.1);
           const lMat = new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0.3, transparent: true });
@@ -86,7 +88,6 @@
           scene.add(linha3d);
         }
 
-        // Topo (cobertura)
         const topoGeo = new THREE.BoxGeometry(larguraBloco + 0.5, 0.4, PROFUNDIDADE_BLOCO + 0.5);
         const topoMat = new THREE.MeshLambertMaterial({ color: 0x888888 });
         const topo = new THREE.Mesh(topoGeo, topoMat);
@@ -95,7 +96,6 @@
       });
     });
 
-  // Rotação suave com o mouse
   let isDragging = false;
   let prevMouse = { x: 0, y: 0 };
   let spherical = { theta: 0, phi: Math.PI / 4, radius: 140 };
