@@ -10,16 +10,11 @@ RUN apt-get update -qq && apt-get install -y \
 
 WORKDIR /app
 
-ENV RAILS_ENV=production
-
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
 COPY . .
 
-# Compila assets + Tailwind v4 para produção
-RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
-
 EXPOSE 3000
 
-CMD ["bash", "-c", "bundle exec rails db:migrate && bundle exec rails db:seed && bundle exec rails server -b 0.0.0.0"]
+CMD ["bash", "-c", "rm -f tmp/pids/server.pid && rails server -b 0.0.0.0"]
