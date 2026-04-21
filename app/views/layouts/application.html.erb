@@ -29,6 +29,7 @@
 
           <div class="hidden md:flex items-center gap-3 text-sm">
             <% if current_user.administrador? %>
+              <%= link_to "Mapa", mapa_path, class: "hover:opacity-75 transition", style: "color: var(--text);" %>
               <%= link_to "Blocos", blocos_path, class: "hover:opacity-75 transition", style: "color: var(--text);" %>
               <%= link_to "Usuários", usuarios_path, class: "hover:opacity-75 transition", style: "color: var(--text);" %>
               <%= link_to "Chamados", chamados_path, class: "hover:opacity-75 transition", style: "color: var(--text);" %>
@@ -36,8 +37,10 @@
               <%= link_to "Status", status_chamados_path, class: "hover:opacity-75 transition", style: "color: var(--text);" %>
               <%= link_to "Auditoria", logs_auditoria_path, class: "hover:opacity-75 transition", style: "color: var(--text);" %>
             <% elsif current_user.colaborador? %>
+              <%= link_to "Mapa", mapa_path, class: "hover:opacity-75 transition", style: "color: var(--text);" %>
               <%= link_to "Chamados", chamados_path, class: "hover:opacity-75 transition", style: "color: var(--text);" %>
             <% elsif current_user.morador? %>
+              <%= link_to "Mapa", mapa_path, class: "hover:opacity-75 transition", style: "color: var(--text);" %>
               <%= link_to "Meus Chamados", chamados_path, class: "hover:opacity-75 transition", style: "color: var(--text);" %>
               <%= link_to "Abrir Chamado", new_chamado_path, class: "hover:opacity-75 transition", style: "color: var(--text);" %>
             <% end %>
@@ -71,6 +74,7 @@
           <p class="text-sm py-3" style="color: var(--text-muted);">Olá, <%= current_user.nome %></p>
           <div class="flex flex-col gap-2">
             <% if current_user.administrador? %>
+              <%= link_to "Mapa", mapa_path, class: "text-sm py-2 px-3 rounded-lg hover:opacity-75", style: "color: var(--text); background-color: var(--bg-row);" %>
               <%= link_to "Blocos", blocos_path, class: "text-sm py-2 px-3 rounded-lg hover:opacity-75", style: "color: var(--text); background-color: var(--bg-row);" %>
               <%= link_to "Usuários", usuarios_path, class: "text-sm py-2 px-3 rounded-lg hover:opacity-75", style: "color: var(--text); background-color: var(--bg-row);" %>
               <%= link_to "Chamados", chamados_path, class: "text-sm py-2 px-3 rounded-lg hover:opacity-75", style: "color: var(--text); background-color: var(--bg-row);" %>
@@ -78,8 +82,10 @@
               <%= link_to "Status", status_chamados_path, class: "text-sm py-2 px-3 rounded-lg hover:opacity-75", style: "color: var(--text); background-color: var(--bg-row);" %>
               <%= link_to "Auditoria", logs_auditoria_path, class: "text-sm py-2 px-3 rounded-lg hover:opacity-75", style: "color: var(--text); background-color: var(--bg-row);" %>
             <% elsif current_user.colaborador? %>
+              <%= link_to "Mapa", mapa_path, class: "text-sm py-2 px-3 rounded-lg hover:opacity-75", style: "color: var(--text); background-color: var(--bg-row);" %>
               <%= link_to "Chamados", chamados_path, class: "text-sm py-2 px-3 rounded-lg hover:opacity-75", style: "color: var(--text); background-color: var(--bg-row);" %>
             <% elsif current_user.morador? %>
+              <%= link_to "Mapa", mapa_path, class: "text-sm py-2 px-3 rounded-lg hover:opacity-75", style: "color: var(--text); background-color: var(--bg-row);" %>
               <%= link_to "Meus Chamados", chamados_path, class: "text-sm py-2 px-3 rounded-lg hover:opacity-75", style: "color: var(--text); background-color: var(--bg-row);" %>
               <%= link_to "Abrir Chamado", new_chamado_path, class: "text-sm py-2 px-3 rounded-lg hover:opacity-75", style: "color: var(--text); background-color: var(--bg-row);" %>
             <% end %>

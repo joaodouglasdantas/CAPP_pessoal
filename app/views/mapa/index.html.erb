@@ -1,0 +1,126 @@
+<div class="p-6">
+  <h1 class="text-2xl font-bold mb-4">Mapa do Condomínio</h1>
+  <div id="mapa-container" style="width: 100%; height: 600px; background: #1a1a2e; border-radius: 12px;"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  const container = document.getElementById('mapa-container');
+
+  // Cena, câmera e renderer
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x1a1a2e);
+
+  const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+  camera.position.set(0, 80, 120);
+  camera.lookAt(0, 0, 0);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.shadowMap.enabled = true;
+  container.appendChild(renderer.domElement);
+
+  // Iluminação
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  scene.add(ambientLight);
+
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+  dirLight.position.set(50, 100, 50);
+  dirLight.castShadow = true;
+  scene.add(dirLight);
+
+  // Chão
+  const groundGeo = new THREE.PlaneGeometry(500, 500);
+  const groundMat = new THREE.MeshLambertMaterial({ color: 0x2d4a22 });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // Constantes de layout
+  const BLOCOS_POR_LINHA = 5;
+  const LARGURA_UNIDADE = 4;
+  const ALTURA_ANDAR = 3;
+  const PROFUNDIDADE_BLOCO = 8;
+  const GAP_X = 6;
+  const GAP_Z = 12;
+
+  const CORES = [0x4a90d9, 0xe67e22, 0x27ae60, 0x8e44ad, 0xe74c3c,
+                 0x16a085, 0xf39c12, 0x2980b9, 0xc0392b, 0x1abc9c];
+
+  fetch('/mapa/dados')
+    .then(r => r.json())
+    .then(blocos => {
+      // Calcula centro do grid para centralizar na cena
+      const totalLinhas = Math.ceil(blocos.length / BLOCOS_POR_LINHA);
+      const maxPorLinha = Math.min(blocos.length, BLOCOS_POR_LINHA);
+
+      blocos.forEach((bloco, i) => {
+        const col = i % BLOCOS_POR_LINHA;
+        const linha = Math.floor(i / BLOCOS_POR_LINHA);
+
+        const larguraBloco = bloco.unidades_por_andar * LARGURA_UNIDADE;
+        const alturaBloco = bloco.quantidade_andares * ALTURA_ANDAR;
+
+        const offsetX = (maxPorLinha * (larguraBloco + GAP_X)) / 2;
+        const offsetZ = (totalLinhas * (PROFUNDIDADE_BLOCO + GAP_Z)) / 2;
+
+        const x = col * (larguraBloco + GAP_X) - offsetX + larguraBloco / 2;
+        const z = linha * (PROFUNDIDADE_BLOCO + GAP_Z) - offsetZ + PROFUNDIDADE_BLOCO / 2;
+
+        // Corpo do prédio
+        const geo = new THREE.BoxGeometry(larguraBloco, alturaBloco, PROFUNDIDADE_BLOCO);
+        const mat = new THREE.MeshLambertMaterial({ color: CORES[i % CORES.length] });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(x, alturaBloco / 2, z);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        scene.add(mesh);
+
+        // Linhas de andares (wireframe horizontal)
+        for (let a = 1; a < bloco.quantidade_andares; a++) {
+          const lGeo = new THREE.BoxGeometry(larguraBloco + 0.1, 0.15, PROFUNDIDADE_BLOCO + 0.1);
+          const lMat = new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0.3, transparent: true });
+          const linha3d = new THREE.Mesh(lGeo, lMat);
+          linha3d.position.set(x, a * ALTURA_ANDAR, z);
+          scene.add(linha3d);
+        }
+
+        // Topo (cobertura)
+        const topoGeo = new THREE.BoxGeometry(larguraBloco + 0.5, 0.4, PROFUNDIDADE_BLOCO + 0.5);
+        const topoMat = new THREE.MeshLambertMaterial({ color: 0x888888 });
+        const topo = new THREE.Mesh(topoGeo, topoMat);
+        topo.position.set(x, alturaBloco + 0.2, z);
+        scene.add(topo);
+      });
+    });
+
+  // Rotação suave com o mouse
+  let isDragging = false;
+  let prevMouse = { x: 0, y: 0 };
+  let spherical = { theta: 0, phi: Math.PI / 4, radius: 140 };
+
+  container.addEventListener('mousedown', e => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
+  container.addEventListener('mouseup', () => isDragging = false);
+  container.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - prevMouse.x;
+    const dy = e.clientY - prevMouse.y;
+    spherical.theta -= dx * 0.005;
+    spherical.phi = Math.max(0.1, Math.min(Math.PI / 2.2, spherical.phi - dy * 0.005));
+    prevMouse = { x: e.clientX, y: e.clientY };
+  });
+  container.addEventListener('wheel', e => {
+    spherical.radius = Math.max(40, Math.min(300, spherical.radius + e.deltaY * 0.2));
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    camera.position.x = spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
+    camera.position.y = spherical.radius * Math.cos(spherical.phi);
+    camera.position.z = spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta);
+    camera.lookAt(0, 0, 0);
+    renderer.render(scene, camera);
+  }
+  animate();
+</script>
