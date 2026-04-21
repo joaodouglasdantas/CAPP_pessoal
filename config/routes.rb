@@ -40,4 +40,7 @@ Rails.application.routes.draw do
   get "dashboard", to: "dashboard#index"
 
   get "/admin/reset", to: "admin_reset#reset"
+
+  get "/mapa", to: "mapa#index"
+  get "/mapa/dados", to: "mapa#dados"
 end
