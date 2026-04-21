@@ -75,22 +75,38 @@
   fetch('/mapa/dados')
     .then(r => r.json())
     .then(blocos => {
-      // Calcula centro do grid para centralizar na cena
       const totalLinhas = Math.ceil(blocos.length / BLOCOS_POR_LINHA);
-      const maxPorLinha = Math.min(blocos.length, BLOCOS_POR_LINHA);
+
+      const larguras = blocos.map(b => b.unidades_por_andar * LARGURA_UNIDADE);
+
+      const linhas = [];
+      for (let l = 0; l < totalLinhas; l++) {
+        const inicio = l * BLOCOS_POR_LINHA;
+        const fim = Math.min(inicio + BLOCOS_POR_LINHA, blocos.length);
+        const blocosLinha = larguras.slice(inicio, fim);
+        const larguraTotal = blocosLinha.reduce((acc, w) => acc + w, 0) + (blocosLinha.length - 1) * GAP_X;
+        linhas.push({ larguraTotal, count: fim - inicio });
+      }
+
+      const alturaGrid = totalLinhas * (PROFUNDIDADE_BLOCO + GAP_Z) - GAP_Z;
 
       blocos.forEach((bloco, i) => {
         const col = i % BLOCOS_POR_LINHA;
-        const linha = Math.floor(i / BLOCOS_POR_LINHA);
-
-        const larguraBloco = bloco.unidades_por_andar * LARGURA_UNIDADE;
+        const linhaIdx = Math.floor(i / BLOCOS_POR_LINHA);
+        const larguraBloco = larguras[i];
         const alturaBloco = bloco.quantidade_andares * ALTURA_ANDAR;
 
-        const offsetX = (maxPorLinha * (larguraBloco + GAP_X)) / 2;
-        const offsetZ = (totalLinhas * (PROFUNDIDADE_BLOCO + GAP_Z)) / 2;
+        const inicioLinha = linhaIdx * BLOCOS_POR_LINHA;
+        let xAcumulado = 0;
+        for (let c = 0; c < col; c++) {
+          xAcumulado += larguras[inicioLinha + c] + GAP_X;
+        }
 
-        const x = col * (larguraBloco + GAP_X) - offsetX + larguraBloco / 2;
-        const z = linha * (PROFUNDIDADE_BLOCO + GAP_Z) - offsetZ + PROFUNDIDADE_BLOCO / 2;
+        const offsetX = linhas[linhaIdx].larguraTotal / 2;
+        const x = xAcumulado - offsetX + larguraBloco / 2;
+
+        const offsetZ = alturaGrid / 2;
+        const z = linhaIdx * (PROFUNDIDADE_BLOCO + GAP_Z) - offsetZ + PROFUNDIDADE_BLOCO / 2;
 
         const geo = new THREE.BoxGeometry(larguraBloco, alturaBloco, PROFUNDIDADE_BLOCO);
         const mat = new THREE.MeshLambertMaterial({ color: CORES[i % CORES.length] });
