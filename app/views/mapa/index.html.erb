@@ -1,7 +1,4 @@
 <div style="position: fixed; top: 57px; left: 0; right: 0; bottom: 0; z-index: 40;">
-  <div style="position: absolute; top: 16px; left: 20px; z-index: 10; color: white; font-size: 1.25rem; font-weight: bold; text-shadow: 0 1px 4px rgba(0,0,0,0.6);">
-    Mapa do Condomínio
-  </div>
   <div id="mapa-container" style="width: 100%; height: 100%; background: #1a1a2e;"></div>
 </div>
 
@@ -30,7 +27,7 @@
   let blocoMeshes = [];
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x1a1a2e);
+  scene.background = new THREE.Color(0x87ceeb);
 
   const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
   camera.position.set(0, 80, 120);
@@ -39,7 +36,9 @@
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.shadowMap.enabled = true;
+  renderer.setPixelRatio(window.devicePixelRatio); 
   container.appendChild(renderer.domElement);
+
 
   window.addEventListener('resize', () => {
     camera.aspect = container.clientWidth / container.clientHeight;
@@ -49,11 +48,6 @@
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
-
-  const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-  dirLight.position.set(50, 100, 50);
-  dirLight.castShadow = true;
-  scene.add(dirLight);
 
   const groundGeo = new THREE.PlaneGeometry(500, 500);
   const groundMat = new THREE.MeshLambertMaterial({ color: 0x2d4a22 });
@@ -65,19 +59,33 @@
   const BLOCOS_POR_LINHA = 5;
   const LARGURA_UNIDADE = 4;
   const ALTURA_ANDAR = 3;
-  const PROFUNDIDADE_BLOCO = 8;
+  const PROFUNDIDADE_BLOCO = 1;
+  const MAX_UNIDADES_LARGURA = 10;
   const GAP_X = 6;
   const GAP_Z = 12;
 
   const CORES = [0x4a90d9, 0xe67e22, 0x27ae60, 0x8e44ad, 0xe74c3c,
                  0x16a085, 0xf39c12, 0x2980b9, 0xc0392b, 0x1abc9c];
 
+  let isDragging = false;
+  let prevMouse = { x: 0, y: 0 };
+  let spherical = { theta: 0, phi: Math.PI / 4, radius: 140 };
+
   fetch('/mapa/dados')
     .then(r => r.json())
     .then(blocos => {
       const totalLinhas = Math.ceil(blocos.length / BLOCOS_POR_LINHA);
+      const raioIdeal = Math.max(140, totalLinhas * 30 + blocos.length * 2);
+      spherical.radius = raioIdeal;
 
-      const larguras = blocos.map(b => b.unidades_por_andar * LARGURA_UNIDADE);
+      const getLayout = (unidades) => {
+        const colsLargura = Math.min(unidades, MAX_UNIDADES_LARGURA);
+        const colsProfundidade = Math.ceil(unidades / MAX_UNIDADES_LARGURA);
+        return { colsLargura, colsProfundidade };
+      };
+
+      const larguras = blocos.map(b => getLayout(b.unidades_por_andar).colsLargura * LARGURA_UNIDADE);
+      const profundidades = blocos.map(b => getLayout(b.unidades_por_andar).colsProfundidade * LARGURA_UNIDADE);
 
       const linhas = [];
       for (let l = 0; l < totalLinhas; l++) {
@@ -85,16 +93,25 @@
         const fim = Math.min(inicio + BLOCOS_POR_LINHA, blocos.length);
         const blocosLinha = larguras.slice(inicio, fim);
         const larguraTotal = blocosLinha.reduce((acc, w) => acc + w, 0) + (blocosLinha.length - 1) * GAP_X;
-        linhas.push({ larguraTotal, count: fim - inicio });
+        const maxProfLinha = profundidades.slice(inicio, fim).reduce((a, b) => Math.max(a, b), 0);
+        linhas.push({ larguraTotal, count: fim - inicio, maxProfLinha });
       }
 
-      const alturaGrid = totalLinhas * (PROFUNDIDADE_BLOCO + GAP_Z) - GAP_Z;
+      const zPorLinha = [];
+      let zAtual = 0;
+      for (let l = 0; l < totalLinhas; l++) {
+        zPorLinha.push(zAtual);
+        zAtual += linhas[l].maxProfLinha + GAP_Z;
+      }
+      const alturaGrid = zAtual - GAP_Z;
 
       blocos.forEach((bloco, i) => {
         const col = i % BLOCOS_POR_LINHA;
         const linhaIdx = Math.floor(i / BLOCOS_POR_LINHA);
         const larguraBloco = larguras[i];
+        const profundidadeBloco = profundidades[i];
         const alturaBloco = bloco.quantidade_andares * ALTURA_ANDAR;
+        const { colsLargura, colsProfundidade } = getLayout(bloco.unidades_por_andar);
 
         const inicioLinha = linhaIdx * BLOCOS_POR_LINHA;
         let xAcumulado = 0;
@@ -106,12 +123,17 @@
         const x = xAcumulado - offsetX + larguraBloco / 2;
 
         const offsetZ = alturaGrid / 2;
-        const z = linhaIdx * (PROFUNDIDADE_BLOCO + GAP_Z) - offsetZ + PROFUNDIDADE_BLOCO / 2;
+        const z = zPorLinha[linhaIdx] - offsetZ + profundidadeBloco / 2;
 
-        const geo = new THREE.BoxGeometry(larguraBloco, alturaBloco, PROFUNDIDADE_BLOCO);
+        const geo = new THREE.BoxGeometry(larguraBloco, alturaBloco, profundidadeBloco);
         const mat = new THREE.MeshLambertMaterial({ color: CORES[i % CORES.length] });
         const mesh = new THREE.Mesh(geo, mat);
-        mesh.userData = { nome: bloco.nome, andares: bloco.quantidade_andares, unidades: bloco.unidades_por_andar };
+        mesh.userData = {
+          nome: bloco.nome,
+          andares: bloco.quantidade_andares,
+          unidades: bloco.unidades_por_andar,
+          total: bloco.quantidade_andares * bloco.unidades_por_andar
+        };
         mesh.position.set(x, alturaBloco / 2, z);
         mesh.castShadow = true;
         mesh.receiveShadow = true;
@@ -119,24 +141,129 @@
         blocoMeshes.push(mesh);
 
         for (let a = 1; a < bloco.quantidade_andares; a++) {
-          const lGeo = new THREE.BoxGeometry(larguraBloco + 0.1, 0.15, PROFUNDIDADE_BLOCO + 0.1);
+          const lGeo = new THREE.BoxGeometry(larguraBloco + 0.1, 0.15, profundidadeBloco + 0.1);
           const lMat = new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0.3, transparent: true });
           const linha3d = new THREE.Mesh(lGeo, lMat);
           linha3d.position.set(x, a * ALTURA_ANDAR, z);
           scene.add(linha3d);
         }
 
-        const topoGeo = new THREE.BoxGeometry(larguraBloco + 0.5, 0.4, PROFUNDIDADE_BLOCO + 0.5);
+        for (let u = 1; u < colsLargura; u++) {
+          const vGeo = new THREE.BoxGeometry(0.15, alturaBloco + 0.1, profundidadeBloco + 0.1);
+          const vMat = new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0.3, transparent: true });
+          const vertical = new THREE.Mesh(vGeo, vMat);
+          const xDiv = (x - larguraBloco / 2) + u * LARGURA_UNIDADE;
+          vertical.position.set(xDiv, alturaBloco / 2, z);
+          scene.add(vertical);
+        }
+
+        for (let p = 1; p < colsProfundidade; p++) {
+          const pGeo = new THREE.BoxGeometry(larguraBloco + 0.1, alturaBloco + 0.1, 0.15);
+          const pMat = new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0.3, transparent: true });
+          const parede = new THREE.Mesh(pGeo, pMat);
+          const zDiv = (z - profundidadeBloco / 2) + p * LARGURA_UNIDADE;
+          parede.position.set(x, alturaBloco / 2, zDiv);
+          scene.add(parede);
+        }
+
+        const topoGeo = new THREE.BoxGeometry(larguraBloco + 0.5, 0.4, profundidadeBloco + 0.5);
         const topoMat = new THREE.MeshLambertMaterial({ color: 0x888888 });
         const topo = new THREE.Mesh(topoGeo, topoMat);
         topo.position.set(x, alturaBloco + 0.2, z);
         scene.add(topo);
       });
-    });
 
-  let isDragging = false;
-  let prevMouse = { x: 0, y: 0 };
-  let spherical = { theta: 0, phi: Math.PI / 4, radius: 140 };
+      
+      const padding = 20; 
+
+      
+      const maxLarguraGrid = Math.max(...linhas.map(l => l.larguraTotal));
+      const meioProfGrid = alturaGrid / 2;
+
+      const muroW = maxLarguraGrid + padding * 2;
+      const muroD = alturaGrid + padding * 2;
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+      dirLight.position.set(100, 200, 100);
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize.width = 4096;
+      dirLight.shadow.mapSize.height = 4096;
+      dirLight.shadow.camera.near = 1;
+      dirLight.shadow.camera.far = 1000;
+      dirLight.shadow.camera.left   = -(muroW / 2 + 50);
+      dirLight.shadow.camera.right  =  (muroW / 2 + 50);
+      dirLight.shadow.camera.top    =  (muroD / 2 + 50);
+      dirLight.shadow.camera.bottom = -(muroD / 2 + 50);
+      dirLight.shadow.bias = -0.001;
+      scene.add(dirLight);
+
+      const muroH = 4;
+      const muroEspessura = 1.5;
+
+      const muroMat = new THREE.MeshLambertMaterial({ color: 0xd4b896 });
+
+      const calcadaGeo = new THREE.PlaneGeometry(muroW, muroD);
+      const calcadaMat = new THREE.MeshLambertMaterial({
+        color: 0x9e9e9e,
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+        polygonOffsetUnits: -1
+      });
+      const calcada = new THREE.Mesh(calcadaGeo, calcadaMat);
+      calcada.rotation.x = -Math.PI / 2;
+      calcada.position.set(0, 0.05, 0);
+      calcada.receiveShadow = true;
+      scene.add(calcada);
+
+      const muroNGeo = new THREE.BoxGeometry(muroW + muroEspessura * 2, muroH, muroEspessura);
+      const muroN = new THREE.Mesh(muroNGeo, muroMat);
+      muroN.position.set(0, muroH / 2, -muroD / 2);
+      muroN.castShadow = true;
+      muroN.receiveShadow = true;
+      scene.add(muroN);
+
+      const muroS = muroN.clone();
+      muroS.position.set(0, muroH / 2, muroD / 2);
+      scene.add(muroS);
+
+      const muroLGeo = new THREE.BoxGeometry(muroEspessura, muroH, muroD);
+      const muroL = new THREE.Mesh(muroLGeo, muroMat);
+      muroL.position.set(muroW / 2, muroH / 2, 0);
+      muroL.castShadow = true;
+      muroL.receiveShadow = true;
+      scene.add(muroL);
+
+      const muroO = muroL.clone();
+      muroO.position.set(-muroW / 2, muroH / 2, 0);
+      scene.add(muroO);
+
+      const pilarGeo = new THREE.BoxGeometry(3, muroH + 2, muroEspessura);
+      const pilarMat = new THREE.MeshLambertMaterial({ color: 0xb0b0b0 });
+      const pilarE = new THREE.Mesh(pilarGeo, pilarMat);
+      pilarE.position.set(-8, (muroH + 2) / 2, muroD / 2 + muroEspessura / 2);
+      pilarE.castShadow = true;
+      scene.add(pilarE);
+
+      const pilarD = pilarE.clone();
+      pilarD.position.set(8,  (muroH + 2) / 2, muroD / 2 + muroEspessura / 2);
+      scene.add(pilarD);
+
+      const tampaGeo = new THREE.BoxGeometry(muroW + muroEspessura * 2 + 0.5, 0.4, muroEspessura + 0.5);
+      const tampaMat = new THREE.MeshLambertMaterial({ color: 0xc0a882 });
+
+      ['N', 'S'].forEach(lado => {
+        const tampa = new THREE.Mesh(tampaGeo, tampaMat);
+        tampa.position.set(0, muroH + 0.2, lado === 'N' ? -muroD / 2 : muroD / 2);
+        scene.add(tampa);
+      });
+
+      const tampaLGeo = new THREE.BoxGeometry(muroEspessura + 0.5, 0.4, muroD + 0.5);
+      ['L', 'O'].forEach(lado => {
+        const tampa = new THREE.Mesh(tampaLGeo, tampaMat);
+        tampa.position.set(lado === 'L' ? muroW / 2 : -muroW / 2, muroH + 0.2, 0);
+        scene.add(tampa);
+      });
+    });
 
   container.addEventListener('mousedown', e => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
   container.addEventListener('mouseup', () => isDragging = false);
@@ -149,7 +276,7 @@
     prevMouse = { x: e.clientX, y: e.clientY };
   });
   container.addEventListener('wheel', e => {
-    spherical.radius = Math.max(40, Math.min(300, spherical.radius + e.deltaY * 0.2));
+    spherical.radius = Math.max(40, Math.min(1000, spherical.radius + e.deltaY * 0.2));
   });
 
   container.addEventListener('mousemove', e => {
