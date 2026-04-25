@@ -1,0 +1,104 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/joaodouglasdantas/dunnas_CAPP/main/public/logo.svg" alt="Capp Logo" width="200"/>
+</p>
+
+# Capp — Versão Pessoal
+
+> Este repositório é uma cópia pessoal do projeto **Capp**, desenvolvido originalmente por mim como resposta ao **Desafio Técnico Nº 0004/2026 — Dunnas**.
+>
+> O repositório original, entregue para o processo seletivo, pode ser acessado em:
+> 👉 [joaodouglasdantas/dunnas_CAPP](https://github.com/joaodouglasdantas/dunnas_CAPP)
+
+Este fork existe para fins de portfólio pessoal, permitindo que eu mantenha o histórico e a visibilidade do projeto sem interferir no repositório oficial da entrega.
+
+---
+
+## Sobre o projeto
+
+Sistema web desenvolvido em **Ruby on Rails** para gerenciamento de chamados em condomínios, com controle de acesso por papéis (RBAC), log de auditoria e arquivamento automático.
+
+> Esta versão roda exclusivamente de forma local via Docker. Para acessar o sistema em produção, consulte o [repositório original](https://github.com/joaodouglasdantas/dunnas_CAPP).
+
+---
+
+## Stack
+
+- Ruby on Rails 8.1.3
+- PostgreSQL
+- Docker + Docker Compose
+- Tailwind CSS v4
+- Devise + RBAC manual
+- Active Storage (disco local)
+- Solid Queue + Solid Cache
+- Minitest + Capybara (TDD)
+
+---
+
+## Funcionalidades
+
+- Cadastro de blocos com geração automática de unidades
+- Três perfis: Administrador, Colaborador e Morador
+- Chamados com tipos, status, SLA e anexos
+- Comentários e histórico de interações
+- Filtros avançados de chamados
+- Log de auditoria completo
+- Arquivamento automático de chamados concluídos há +30 dias
+- Dashboard personalizado por perfil
+- Interface responsiva com tema escuro/claro
+
+---
+
+## Como rodar
+
+1. Clone o repositório
+2. Copie `.env.example` para `.env` e preencha as variáveis
+3. Execute:
+```bash
+docker compose up --build
+```
+4. Em outro terminal, crie e migre o banco:
+```bash
+docker compose exec web rails db:create db:migrate db:seed
+```
+5. Acesse `http://localhost:3000`
+
+---
+
+## Credenciais iniciais
+
+- Email: admin@capp.com
+- Senha: admin123
+
+---
+
+## Testes
+
+```bash
+docker compose exec web rails test
+```
+
+---
+
+## Solução de Problemas
+
+```bash
+# Erro ao subir a aplicação pela segunda vez — limpe o cache do Docker
+docker builder prune -a
+
+# Erro de volume do Docker
+docker compose down -v
+docker compose exec web rails db:create db:migrate RAILS_ENV=test
+
+# Restart da aplicação
+docker compose restart web
+```
+
+---
+
+## Documentação completa
+
+A documentação técnica completa está disponível no repositório original:
+
+<a href="https://github.com/joaodouglasdantas/dunnas_CAPP/blob/main/Documentacao_Capp.pdf" target="_blank">Documentacao_Capp.pdf</a>
+&nbsp;|&nbsp;
+<a href="https://github.com/joaodouglasdantas/dunnas_CAPP/blob/main/Documentacao_Capp.docx" target="_blank">Documentacao_Capp.docx</a>
