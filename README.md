@@ -9,7 +9,7 @@
 > O repositório original, entregue para o processo seletivo, pode ser acessado em:
 > 👉 [joaodouglasdantas/dunnas_CAPP](https://github.com/joaodouglasdantas/dunnas_CAPP)
 
-Este fork existe para fins de portfólio pessoal, permitindo que eu mantenha o histórico e a visibilidade do projeto sem interferir no repositório oficial da entrega.
+Essa cópia existe para fins de portfólio pessoal, permitindo que eu mantenha o histórico e a visibilidade do projeto sem interferir no repositório oficial da entrega.
 
 ---
 
